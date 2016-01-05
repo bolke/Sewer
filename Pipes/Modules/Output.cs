@@ -11,36 +11,60 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Output: Initiator, IOutput<IMessage>
+    public class Output<T>: Initiator, IOutput<T> where T:class
     {
-        [Configure(InitType = typeof(ConcurrentQueue<IMessage>))]
-        public ConcurrentQueue<IMessage> Queue { get; set; }
+        public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
+        {
+            get;
+            set;
+        }
+
+        [Configure(InitType = typeof(ConcurrentQueue<>))]
+        public ConcurrentQueue<T> Queue { get; set; }
 
         public Output()
         {
         }
 
-        public virtual IMessage Pop()
+        public override bool Initialize()
         {
-            return PopObject() as IMessage;
-        }
-
-        public virtual object PopObject()
-        {
-            IMessage result;
-            if(Queue.TryDequeue(out result))
-                return result;
-            return null;
-        }
-
-        public virtual bool PushObject(object element)
-        {
-            if(element is IMessage)
+            if(base.Initialize())
             {
-                Queue.Enqueue(element as IMessage);
+                OutputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
                 return true;
             }
             return false;
         }
+
+        public virtual T Pop()
+        {
+            T result = PopObject() as T;
+            for(int i = 0; i < OutputListeners.Count; i++)
+                OutputListeners.ElementAt(i).Value.Notify(result);
+            return result;
+        }
+
+        public virtual object PopObject()
+        {
+            T result;
+            if(Queue.TryDequeue(out result))
+            {
+                for(int i = 0; i < OutputListeners.Count; i++)
+                    OutputListeners.ElementAt(i).Value.Notify(result);
+                return result;
+            }
+            return default(T);
+        }
+
+        public virtual bool PushObject(object element)
+        {
+            if(element is T)
+            {
+                Queue.Enqueue(element as T);
+                return true;
+            }
+            return false;
+        }
+
     }
 }

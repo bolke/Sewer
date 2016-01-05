@@ -11,33 +11,51 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Input: Initiator, IInput<IMessage>
+    public class Input<T>: Initiator, IInput<T> where T:class
     {
-        [Configure(InitType = typeof(ConcurrentQueue<IMessage>))]
-        public ConcurrentQueue<IMessage> Queue { get; set; }
+        public ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
+        {
+            get;
+            set;
+        }
+
+        [Configure(InitType=typeof(ConcurrentQueue<>))]
+        public ConcurrentQueue<T> Queue { get; set; }
 
         public Input()
         {
         }
 
-        public virtual bool Push(IMessage item)
+        public override bool Initialize()
+        {
+            if(base.Initialize())
+            {
+                InputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
+                return true;
+            }
+            return false;
+        }
+
+        public virtual bool Push(T item)
         {
             return PushObject(item);
         }
 
         public virtual object PopObject()
         {
-            IMessage result;
+            T result;
             if(Queue.TryDequeue(out result))
                 return result;
             return null;
         }
 
         public virtual bool PushObject(object element)
-        {
-            if(element is IMessage)
+        { 
+            if(element is T)
             {
-                Queue.Enqueue(element as IMessage);
+                for(int i = 0; i < InputListeners.Count; i++)
+                    InputListeners.ElementAt(i).Value.Notify(element as T);
+                Queue.Enqueue(element as T);
                 return true;
             }
             return false;
