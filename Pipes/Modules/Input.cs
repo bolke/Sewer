@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Input<T>: Initiator, IInput<T> where T:class
+    public class Input<T>: Initiator,INotify<T>, IInput<T> where T:class
     {
         public ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
         {
@@ -36,9 +36,15 @@ namespace Pipes.Modules
             return false;
         }
 
-        public virtual bool Push(T item)
+        public virtual bool Push(T element)
         {
-            return PushObject(item);
+            if(element is T)
+            {
+                for(int i = 0; i < InputListeners.Count; i++)
+                    InputListeners.ElementAt(i).Value.Notify(element as T);
+                return PushObject(element);
+            }
+            return false;
         }
 
         public virtual object PopObject()
@@ -53,12 +59,15 @@ namespace Pipes.Modules
         { 
             if(element is T)
             {
-                for(int i = 0; i < InputListeners.Count; i++)
-                    InputListeners.ElementAt(i).Value.Notify(element as T);
                 Queue.Enqueue(element as T);
                 return true;
             }
             return false;
+        }
+
+        public virtual void Notify(T element)
+        {
+            PushObject(element);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace SewerConsole
     class Cake: INotify<IMessage>
     {
         Guid uni = Guid.NewGuid();
+        public Guid UniqueId { get; set; }
         public void Notify(IMessage item)
         {
             Console.Write(uni + ":    ");

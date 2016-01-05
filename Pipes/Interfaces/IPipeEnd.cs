@@ -11,5 +11,7 @@ namespace Pipes.Interfaces
 {
     public interface IPipeEnd<T>:IInput<T>, IOutput<T>
     {
+        IInput<T> Input { get; set; }
+        IOutput<T> Output { get; set; }
     }
 }

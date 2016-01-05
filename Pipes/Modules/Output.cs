@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Output<T>: Initiator, IOutput<T> where T:class
+    public class Output<T>: Initiator, INotify<T>, IOutput<T> where T: class
     {
         public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
         {
@@ -49,8 +49,6 @@ namespace Pipes.Modules
             T result;
             if(Queue.TryDequeue(out result))
             {
-                for(int i = 0; i < OutputListeners.Count; i++)
-                    OutputListeners.ElementAt(i).Value.Notify(result);
                 return result;
             }
             return default(T);
@@ -66,5 +64,10 @@ namespace Pipes.Modules
             return false;
         }
 
+
+        public virtual void Notify(T element)
+        {
+            PushObject(element);
+        }
     }
 }

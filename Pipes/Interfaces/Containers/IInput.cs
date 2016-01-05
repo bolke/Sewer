@@ -1,4 +1,5 @@
 ﻿using Mod.Interfaces;
+using Mod.Interfaces.Config;
 using Mod.Interfaces.Containers;
 using System;
 using System.Collections.Concurrent;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces.Containers
 {
-    public interface IInput<T>: IObjectContainer
+    public interface IInput<T>: IObjectContainer, IUnique
     {
         ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners { get; set; }
-        bool Push(T item);
+        bool Push(T element);
     }
 }
