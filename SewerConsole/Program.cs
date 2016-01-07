@@ -1,5 +1,4 @@
 ﻿using Pipes.Interfaces;
-using Pipes.Interfaces.Containers;
 using Pipes.Modules;
 using System;
 using System.Collections.Generic;
@@ -9,13 +8,11 @@ using System.Threading.Tasks;
 
 namespace SewerConsole
 {
-    class Cake: INotify<IMessage>
+    class Cake
     {
-        Guid uni = Guid.NewGuid();
-        public Guid UniqueId { get; set; }
         public void Notify(IMessage item)
         {
-            Console.Write(uni + ":    ");
+            Console.Write("LALALALALALA" + ":    ");
             Console.WriteLine(item.UniqueId);
         }
     }
@@ -29,15 +26,15 @@ namespace SewerConsole
             
             Cake f = new Cake();
             Cake d = new Cake();
-            test.InputListeners[f] = f;
-            test.InputListeners[d] = d;
+            test.RegisterInputListener(new Notify<IMessage>(new Action<IMessage>(d.Notify)));
+            test.RegisterInputListener(new Notify<IMessage>(new Action<IMessage>(f.Notify)));
             test.Push(new Message());
             test.Push(new Message());
 
             Output<IMessage> toast = new Output<IMessage>();
             toast.Initialize();
-            toast.OutputListeners[f] = f;
-            toast.OutputListeners[d] = d;
+            toast.RegisterOutputListener(new Notify<IMessage>(new Action<IMessage>(d.Notify)));
+            toast.RegisterOutputListener(new Notify<IMessage>(new Action<IMessage>(f.Notify)));
             toast.Queue = test.Queue;
             IMessage a = toast.Pop();
             IMessage b = toast.Pop();

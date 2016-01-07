@@ -43,13 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\Containers\IInput.cs" />
-    <Compile Include="Interfaces\Containers\INotify.cs" />
-    <Compile Include="Interfaces\Containers\IOutput.cs" />
+    <Compile Include="Interfaces\IClone.cs" />
+    <Compile Include="Interfaces\IInput.cs" />
+    <Compile Include="Interfaces\INotify.cs" />
+    <Compile Include="Interfaces\IOutput.cs" />
     <Compile Include="Interfaces\IMessage.cs" />
+    <Compile Include="Interfaces\IPipe.cs" />
     <Compile Include="Interfaces\IPipeEnd.cs" />
     <Compile Include="Modules\Input.cs" />
     <Compile Include="Modules\Message.cs" />
+    <Compile Include="Modules\Notify.cs" />
     <Compile Include="Modules\Output.cs" />
     <Compile Include="Modules\PipeEnd.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

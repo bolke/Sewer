@@ -13,18 +13,28 @@ namespace Pipes.Modules
 
         public Message()
         {
+            Duplicate = true;
             UniqueId = Guid.NewGuid();
         }
 
         public virtual IMessage Clone()
         {
-            return new Message() { UniqueId = this.UniqueId };
+            if(Duplicate)
+                return new Message() { UniqueId = uniqueId };
+            else
+                return this;
         }
 
         public virtual Guid UniqueId
         {
             get { return uniqueId; }
             set { uniqueId = value; }
+        }
+
+        public virtual bool Duplicate
+        {
+            get;
+            set;
         }
     }
 }

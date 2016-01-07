@@ -1,7 +1,6 @@
 ﻿using Mod.Configuration.Properties;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
-using Pipes.Interfaces.Containers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Input<T>: Initiator,INotify<T>, IInput<T> where T:class
+    public class Input<T>: Initiator,IInput<T> where T:IClone<T>
     {
         public ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
         {
@@ -41,7 +40,7 @@ namespace Pipes.Modules
             if(element is T)
             {
                 for(int i = 0; i < InputListeners.Count; i++)
-                    InputListeners.ElementAt(i).Value.Notify(element as T);
+                    InputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(element);
                 return PushObject(element);
             }
             return false;
@@ -59,15 +58,15 @@ namespace Pipes.Modules
         { 
             if(element is T)
             {
-                Queue.Enqueue(element as T);
+                Queue.Enqueue((T)element);
                 return true;
             }
             return false;
         }
 
-        public virtual void Notify(T element)
+        public virtual void RegisterInputListener(INotify<T> inputListener)
         {
-            PushObject(element);
+            InputListeners[inputListener] = inputListener;
         }
     }
 }

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pipes.Interfaces.Containers
+namespace Pipes.Interfaces
 {
-    public interface INotify<T>: IUnique
+    public interface INotify<T>
     {
-        void Notify(T item);
+        Action<T> NotifyDelegate { get; set; }  
     }
 }

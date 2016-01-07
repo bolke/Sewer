@@ -2,7 +2,6 @@
 using Mod.Interfaces.Containers;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
-using Pipes.Interfaces.Containers;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class PipeEnd<T>:Initiator, IPipeEnd<T>
+    public class PipeEnd<T>:Initiator, IPipeEnd<T> where T:IClone<T>
     {
         [Configure(InitType = typeof(Input<>))]
         public virtual IInput<T> Input
@@ -28,19 +27,7 @@ namespace Pipes.Modules
             set;
         }
 
-        public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
-        {
-            get { return Output.OutputListeners; }
-            set { Output.OutputListeners = value; }
-        }
-
-        public virtual ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
-        {
-            get { return Input.InputListeners; }
-            set { Input.InputListeners = value; }
-        }
-        
-        public Guid UniqueId
+        public virtual Guid UniqueId
         {
             get;
             set;
@@ -64,6 +51,16 @@ namespace Pipes.Modules
         public virtual bool Push(T element)
         {
             return Input.Push(element);
+        }
+
+        public virtual void RegisterInputListener(INotify<T> inputListener)
+        {
+            Input.RegisterInputListener(inputListener);
+        }
+
+        public virtual void RegisterOutputListener(INotify<T> outputListener)
+        {
+            Output.RegisterOutputListener(outputListener);
         }
     }
 }
