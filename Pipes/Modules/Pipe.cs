@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class PipeEnd<T>:Initiator, IPipeEnd<T> where T:IClone<T>
+    public class Pipe<T>:Initiator, IPipe<T> where T:IClone<T>
     {
         [Configure(InitType = typeof(Input<>))]
         public virtual IInput<T> Input
@@ -22,12 +22,6 @@ namespace Pipes.Modules
 
         [Configure(InitType=typeof(Output<>))]
         public virtual IOutput<T> Output
-        {
-            get;
-            set;
-        }
-
-        public virtual Guid UniqueId
         {
             get;
             set;
@@ -53,7 +47,7 @@ namespace Pipes.Modules
             return Input.Push(element);
         }
 
-        public virtual void RegisterInputListener(INotify<T> inputListener)
+       public virtual void RegisterInputListener(INotify<T> inputListener)
         {
             Input.RegisterInputListener(inputListener);
         }

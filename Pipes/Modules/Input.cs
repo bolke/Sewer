@@ -12,6 +12,7 @@ namespace Pipes.Modules
 {
     public class Input<T>: Initiator,IInput<T> where T:IClone<T>
     {
+        [Configure()]
         public ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
         {
             get;
@@ -40,7 +41,7 @@ namespace Pipes.Modules
             if(element is T)
             {
                 for(int i = 0; i < InputListeners.Count; i++)
-                    InputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(element);
+                    InputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(element.Clone());
                 return PushObject(element);
             }
             return false;

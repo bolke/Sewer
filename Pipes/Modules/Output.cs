@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Output<T>: Initiator, IOutput<T> where T: class
+    public class Output<T>: Initiator, IOutput<T> where T:IClone<T>
     {
+        [Configure()]
         public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
         {
             get;
@@ -37,9 +38,9 @@ namespace Pipes.Modules
 
         public virtual T Pop()
         {
-            T result = PopObject() as T;
+            T result = (T)PopObject();
             for(int i = 0; i < OutputListeners.Count; i++)
-                OutputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(result);
+                OutputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(result.Clone());
             return result;
         }
 
@@ -57,7 +58,7 @@ namespace Pipes.Modules
         {
             if(element is T)
             {
-                Queue.Enqueue(element as T);
+                Queue.Enqueue((T)element);
                 return true;
             }
             return false;

@@ -9,6 +9,6 @@ namespace Pipes.Interfaces
 {
     public interface INotify<T>
     {
-        Action<T> NotifyDelegate { get; set; }  
+        Func<T, bool> NotifyDelegate { get; set; }
     }
 }

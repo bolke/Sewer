@@ -8,41 +8,40 @@ using System.Threading.Tasks;
 
 namespace SewerConsole
 {
-    class Cake
-    {
-        public void Notify(IMessage item)
-        {
-            Console.Write("LALALALALALA" + ":    ");
-            Console.WriteLine(item.UniqueId);
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
         {
-            Input<IMessage> test = new Input<IMessage>();
-            test.Initialize();
-            
-            Cake f = new Cake();
-            Cake d = new Cake();
-            test.RegisterInputListener(new Notify<IMessage>(new Action<IMessage>(d.Notify)));
-            test.RegisterInputListener(new Notify<IMessage>(new Action<IMessage>(f.Notify)));
-            test.Push(new Message());
-            test.Push(new Message());
 
-            Output<IMessage> toast = new Output<IMessage>();
-            toast.Initialize();
-            toast.RegisterOutputListener(new Notify<IMessage>(new Action<IMessage>(d.Notify)));
-            toast.RegisterOutputListener(new Notify<IMessage>(new Action<IMessage>(f.Notify)));
-            toast.Queue = test.Queue;
-            IMessage a = toast.Pop();
-            IMessage b = toast.Pop();
-            IMessage c = a.Clone();
+            List<Pipe<IMessage>> pipeLine = new List<Pipe<IMessage>>();
 
-            test.Push(a);
-            test.Push(b);
-            test.Push(c);
+            for(int i = 0; i < 6; i++)
+            {
+                pipeLine.Add(new Pipe<IMessage>());
+                pipeLine[i].Initialize();
+            }
+
+            pipeLine[0].Input = pipeLine[1];
+        
+            pipeLine[1].RegisterInputListener(new Notify<IMessage>(pipeLine[3].Push));
+            pipeLine[1].RegisterInputListener(new Notify<IMessage>(pipeLine[2].Push));
+            pipeLine[2].RegisterInputListener(new Notify<IMessage>(pipeLine[3].Push));
+            pipeLine[3].RegisterInputListener(new Notify<IMessage>(pipeLine[4].Push));
+            pipeLine[4].RegisterInputListener(new Notify<IMessage>(pipeLine[5].Push));
+            pipeLine[0].Push(new Message());
+
+            for(int i = 0; i < 6; i++)
+            {
+                Console.Write((i+1).ToString() + ":");
+                Input<IMessage> input = null;
+                Pipe<IMessage> pipe = pipeLine[i];
+                while(pipe.Input is Pipe<IMessage>)
+                {
+                    pipe = pipe.Input as Pipe<IMessage>;
+                }
+                Console.Write(":"+pipe.Input.UniqueId + ":");
+                Console.WriteLine((pipe.Input as Input<IMessage>).Queue.Count());
+            }
 
             Console.ReadLine();
         }

@@ -9,12 +9,12 @@ namespace Pipes.Modules
 {
     public class Notify<T>: INotify<T>
     {
-        public Notify(Action<T> notifyDelegate)
+        public Notify(Func<T, bool> notifyDelegate)
         {
             NotifyDelegate = notifyDelegate;
         }
       
-        public virtual Action<T> NotifyDelegate
+        public Func<T, bool> NotifyDelegate
         {
             get;
             set;

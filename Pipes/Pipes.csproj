@@ -49,12 +49,11 @@
     <Compile Include="Interfaces\IOutput.cs" />
     <Compile Include="Interfaces\IMessage.cs" />
     <Compile Include="Interfaces\IPipe.cs" />
-    <Compile Include="Interfaces\IPipeEnd.cs" />
     <Compile Include="Modules\Input.cs" />
     <Compile Include="Modules\Message.cs" />
     <Compile Include="Modules\Notify.cs" />
     <Compile Include="Modules\Output.cs" />
-    <Compile Include="Modules\PipeEnd.cs" />
+    <Compile Include="Modules\Pipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

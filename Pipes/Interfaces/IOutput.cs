@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IOutput<T>: IObjectContainer, IUnique
+    public interface IOutput<T>: IObjectContainer, IUnique where T:IClone<T>
     {
         void RegisterOutputListener(INotify<T> outputListener);
         T Pop();
