@@ -1,4 +1,5 @@
-﻿using Mod.Interfaces;
+﻿using Mod.Configuration.Properties;
+using Mod.Interfaces;
 using Mod.Interfaces.Config;
 using Mod.Interfaces.Containers;
 using System;
@@ -12,6 +13,8 @@ namespace Pipes.Interfaces
 {
     public interface IOutput<T>: IObjectContainer, IUnique where T:IClone<T>
     {
+        [Configure(InitType = typeof(ConcurrentQueue<>))]
+        IProducerConsumerCollection<T> Queue { get; set; }
         void RegisterOutputListener(INotify<T> outputListener);
         T Pop();
     }

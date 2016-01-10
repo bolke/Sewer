@@ -20,7 +20,7 @@ namespace Pipes.Modules
         }
 
         [Configure(InitType=typeof(ConcurrentQueue<>))]
-        public ConcurrentQueue<T> Queue { get; set; }
+        public virtual IProducerConsumerCollection<T> Queue { get; set; }
 
         public Input()
         {
@@ -50,7 +50,7 @@ namespace Pipes.Modules
         public virtual object PopObject()
         {
             T result;
-            if(Queue.TryDequeue(out result))
+            if(Queue.TryTake(out result))
                 return result;
             return null;
         }
@@ -59,7 +59,7 @@ namespace Pipes.Modules
         { 
             if(element is T)
             {
-                Queue.Enqueue((T)element);
+                Queue.TryAdd((T)element);
                 return true;
             }
             return false;

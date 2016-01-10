@@ -15,8 +15,22 @@ namespace SewerConsole
             Valve<IMessage> valve = new Valve<IMessage>();
             Pipe<IMessage> pipe = new Pipe<IMessage>();
 
+            Input<IMessage> input = new Input<IMessage>();
+            Output<IMessage> output = new Output<IMessage>();
+
             valve.Initialize();
             pipe.Initialize();
+            input.Initialize();
+            output.Initialize();
+
+            pipe.Input = input;
+            pipe.Output = output;
+
+            IInput<IMessage> inp = pipe;
+            IOutput<IMessage> outp = pipe;
+
+            inp.Queue = outp.Queue;
+
             valve.Pipe = pipe;
 
             valve.Push(new Message());

@@ -2,6 +2,7 @@
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,11 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Valve<T>:Initiator ,IPipe<T>, IValve<T> where T:IClone<T>
+    public class Valve<T>:Pipe<T>, IValve<T> where T:IClone<T>
     {
+        protected IInput<T> input = null;
+        protected IOutput<T> output = null;
+        
         [Configure(DefaultValue=false)]
         public virtual bool IsOpen
         {
@@ -39,31 +43,31 @@ namespace Pipes.Modules
         }
 
 
-        public virtual T Pop()
+        public override T Pop()
         {
-            if(IsOpen)
-                return Pipe.Pop();
+            if(IsOpen && Output != null)
+                return Output.Pop();
             return default(T);
         }
 
-        public virtual bool Push(T element)
+        public override bool Push(T element)
         {
-            if(IsOpen)
-                return Pipe.Push(element);
+            if(IsOpen && Input!=null)
+                return Input.Push(element);
             return false;
         }
 
-        public virtual object PopObject()
+        public override object PopObject()
         {
-            if(IsOpen)
-                return Pipe.PopObject();
+            if(IsOpen && Output != null)
+                return Output.PopObject();
             return default(T);
         }
 
-        public virtual bool PushObject(object element)
+        public override bool PushObject(object element)
         {
-            if(IsOpen)
-                return Pipe.PushObject(element);
+            if(IsOpen && Input != null)
+                return Input.PushObject(element);
             return false;
         }
 
@@ -75,47 +79,39 @@ namespace Pipes.Modules
         }
 
         [Configure]
-        public virtual IInput<T> Input
+        public override IInput<T> Input
         {
             get
             {
                 if(Pipe!=null)
                     return Pipe.Input;
-                return null;
+                return input;
             }
             set
             {
-                if(Pipe!=null)
+                if(Pipe != null)
                     Pipe.Input = value;
+                else
+                    input = value;
             }
         }
 
         [Configure]
-        public virtual IOutput<T> Output
+        public override IOutput<T> Output
         {
             get
             {
                 if(Pipe!=null)
                     return Pipe.Output;
-                return null;
+                return output;
             }
             set
             {
-                if(Pipe!=null)
+                if(Pipe != null)
                     Pipe.Output = value;
+                else
+                    output = value;
             }
-        }
-
-        public virtual void RegisterInputListener(INotify<T> inputListener)
-        {
-            if(Input != null)
-                Input.RegisterInputListener(inputListener);
-        }
-
-        public virtual void RegisterOutputListener(INotify<T> outputListener)
-        {
-            if(Output != null)
-                Output.RegisterOutputListener(outputListener);
         }
     }
 }
