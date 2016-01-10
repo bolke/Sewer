@@ -12,37 +12,25 @@ namespace SewerConsole
     {
         static void Main(string[] args)
         {
+            Valve<IMessage> valve = new Valve<IMessage>();
+            Pipe<IMessage> pipe = new Pipe<IMessage>();
 
-            List<Pipe<IMessage>> pipeLine = new List<Pipe<IMessage>>();
+            valve.Initialize();
+            pipe.Initialize();
+            valve.Pipe = pipe;
 
-            for(int i = 0; i < 6; i++)
-            {
-                pipeLine.Add(new Pipe<IMessage>());
-                pipeLine[i].Initialize();
-            }
+            valve.Push(new Message());
+            valve.Push(new Message());
 
-            pipeLine[0].Input = pipeLine[1];
-        
-            pipeLine[1].RegisterInputListener(new Notify<IMessage>(pipeLine[3].Push));
-            pipeLine[1].RegisterInputListener(new Notify<IMessage>(pipeLine[2].Push));
-            pipeLine[2].RegisterInputListener(new Notify<IMessage>(pipeLine[3].Push));
-            pipeLine[3].RegisterInputListener(new Notify<IMessage>(pipeLine[4].Push));
-            pipeLine[4].RegisterInputListener(new Notify<IMessage>(pipeLine[5].Push));
-            pipeLine[0].Push(new Message());
+            valve.Open();
 
-            for(int i = 0; i < 6; i++)
-            {
-                Console.Write((i+1).ToString() + ":");
-                Input<IMessage> input = null;
-                Pipe<IMessage> pipe = pipeLine[i];
-                while(pipe.Input is Pipe<IMessage>)
-                {
-                    pipe = pipe.Input as Pipe<IMessage>;
-                }
-                Console.Write(":"+pipe.Input.UniqueId + ":");
-                Console.WriteLine((pipe.Input as Input<IMessage>).Queue.Count());
-            }
+            valve.Push(new Message());
+            valve.Push(new Message());
 
+            valve.Pop();
+            valve.Close();
+
+            valve.Pop();
             Console.ReadLine();
         }
     }

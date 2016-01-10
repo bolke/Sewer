@@ -47,7 +47,7 @@ namespace Pipes.Modules
             return Input.Push(element);
         }
 
-       public virtual void RegisterInputListener(INotify<T> inputListener)
+        public virtual void RegisterInputListener(INotify<T> inputListener)
         {
             Input.RegisterInputListener(inputListener);
         }

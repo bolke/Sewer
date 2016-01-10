@@ -12,7 +12,7 @@ namespace Pipes.Modules
 {
     public class Output<T>: Initiator, IOutput<T> where T:IClone<T>
     {
-        [Configure()]
+        [Configure]
         public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
         {
             get;
