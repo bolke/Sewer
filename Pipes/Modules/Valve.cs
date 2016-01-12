@@ -45,29 +45,29 @@ namespace Pipes.Modules
 
         public override T Pop()
         {
-            if(IsOpen && Output != null)
-                return Output.Pop();
+            if(IsOpen)
+                return base.Pop();
             return default(T);
         }
 
         public override bool Push(T element)
         {
-            if(IsOpen && Input!=null)
-                return Input.Push(element);
+            if(IsOpen)
+                return base.Push(element);
             return false;
         }
 
         public override object PopObject()
         {
-            if(IsOpen && Output != null)
-                return Output.PopObject();
+            if(IsOpen)
+                return base.PopObject();
             return default(T);
         }
 
         public override bool PushObject(object element)
         {
-            if(IsOpen && Input != null)
-                return Input.PushObject(element);
+            if(IsOpen)
+                return base.PushObject(element);
             return false;
         }
 

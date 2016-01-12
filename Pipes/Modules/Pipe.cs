@@ -83,14 +83,34 @@ namespace Pipes.Modules
             set;
         }
 
-        public virtual object PopObject()
+        object Pipes.Interfaces.IInput<T>.PopObject()
+        {
+            return Input.PopObject();
+        }
+
+        object Pipes.Interfaces.IOutput<T>.PopObject()
         {
             return Output.PopObject();
+        }
+
+        bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
+        {
+            return Input.PushObject(element);
+        }
+
+        bool Pipes.Interfaces.IInput<T>.PushObject(object element)
+        {
+            return Input.PushObject(element);
         }
 
         public virtual bool PushObject(object element)
         {
             return Input.PushObject(element);
+        }
+
+        public virtual object PopObject()
+        {
+            return Output.PopObject();
         }
 
         public virtual T Pop()

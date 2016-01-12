@@ -17,5 +17,7 @@ namespace Pipes.Interfaces
         IProducerConsumerCollection<T> Queue { get; set; }
         void RegisterInputListener(INotify<T> inputListener);
         bool Push(T element);
+        bool PushObject(object element);
+        object PopObject();
     }
 }
