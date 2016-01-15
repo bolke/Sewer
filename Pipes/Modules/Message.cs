@@ -17,7 +17,7 @@ namespace Pipes.Modules
             UniqueId = Guid.NewGuid();
         }
 
-        public virtual IMessage Clone()
+        public virtual object Clone()
         {
             if(Duplicate)
                 return new Message() { UniqueId = uniqueId };

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IMessage: IUnique, IClone<IMessage>
+    public interface IMessage: IUnique, IClone
     {
     }
 }

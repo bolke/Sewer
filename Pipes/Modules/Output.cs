@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Output<T>: Initiator, IOutput<T> where T:IClone<T>
+    public class Output<T>: Initiator, IOutput<T> where T:IClone
     {
         [Configure]
         public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners

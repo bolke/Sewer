@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IClone<T>
+    public interface IClone: ICloneable
     {
         [Configure(DefaultValue=true)]
         bool Duplicate { get; set; }
-        T Clone();
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IValve<T>: IInput<T>, IOutput<T> where T:IClone<T>
+    public interface IValve<T>: IInput<T>, IOutput<T> where T:IClone
     {
         [Configure(DefaultValue=null)]
         IPipe<T> Pipe { get; set; }

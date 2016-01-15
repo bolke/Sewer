@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IClone<T>
+    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IClone
     {
         IProducerConsumerCollection<T> Pipes.Interfaces.IInput<T>.Queue
         {
@@ -115,9 +115,19 @@ namespace Pipes.Modules
 
         public virtual T Pop()
         {
-            T result = (T)Output.Pop();
-            for(int i = 0; i < OutputListeners.Count; i++)
-                OutputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(result.Clone());
+            T result = default(T);
+            if ((Output != null) && (Output != this))
+                result = (T)Output.Pop();
+            else
+                result = (T)PopObject();
+            for (int i = 0; i < OutputListeners.Count; i++)
+            {
+                INotify<T> notifier = OutputListeners.ElementAt(i).Value;
+                if(notifier.Duplicate)
+                    notifier.NotifyDelegate.DynamicInvoke(result.Clone());
+                else
+                    notifier.NotifyDelegate.DynamicInvoke(result);
+            }
             return result;
         }
 
@@ -125,9 +135,17 @@ namespace Pipes.Modules
         {
             if(element is T)
             {
-                for(int i = 0; i < InputListeners.Count; i++)
-                    InputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(element.Clone());
-                return Input.Push(element);
+                for (int i = 0; i < InputListeners.Count; i++)
+                {
+                    INotify<T> notifier = InputListeners.ElementAt(i).Value;
+                    if(notifier.Duplicate)
+                        notifier.NotifyDelegate.DynamicInvoke(element.Clone());
+                    else
+                        notifier.NotifyDelegate.DynamicInvoke(element);
+                }
+                if (Input != this)
+                    return Input.Push(element);
+                return PushObject(element);
             }
             return false;
         }

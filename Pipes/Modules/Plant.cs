@@ -7,7 +7,7 @@ using Pipes.Interfaces;
 
 namespace Pipes.Modules
 {
-    public class Plant<T>: Pipe<T> where T:IClone<T>
+    public class Plant<T>: Pipe<T> where T:IClone
     {
         public override bool Push(T element)
         {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Valve<T>:Pipe<T>, IValve<T> where T:IClone<T>
+    public class Valve<T>:Pipe<T>, IValve<T> where T:IClone
     {
         protected IInput<T> input = null;
         protected IOutput<T> output = null;

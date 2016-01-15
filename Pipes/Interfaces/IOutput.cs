@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IOutput<T>: IObjectContainer, IUnique where T:IClone<T>
+    public interface IOutput<T>: IObjectContainer, IUnique where T:IClone
     {
         [Configure(InitType = typeof(ConcurrentQueue<>))]
         IProducerConsumerCollection<T> Queue { get; set; }
