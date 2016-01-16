@@ -11,10 +11,5 @@ namespace Pipes.Interfaces
 {
     public interface IPipe<T>:IInput<T>, IOutput<T> where T:IClone
     {
-        [Configure(DefaultValue=null)]
-        IInput<T> Input { get; set; }
-
-        [Configure(DefaultValue = null)]
-        IOutput<T> Output { get; set; }
     }
 }

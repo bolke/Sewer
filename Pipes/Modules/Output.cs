@@ -22,6 +22,9 @@ namespace Pipes.Modules
         [Configure(InitType = typeof(ConcurrentQueue<>))]
         public virtual IProducerConsumerCollection<T> Queue { get; set; }
 
+        [Configure(DefaultValue = null)]
+        public virtual IInput<T> Input { get; set; }
+
         public Output()
         {
         }
@@ -39,8 +42,15 @@ namespace Pipes.Modules
         public virtual T Pop()
         {
             T result = (T)PopObject();
-            for(int i = 0; i < OutputListeners.Count; i++)
-                OutputListeners.ElementAt(i).Value.NotifyDelegate.DynamicInvoke(result.Clone());
+            for (int i = 0; i < OutputListeners.Count; i++)
+            {
+                INotify<T> notify = OutputListeners.ElementAt(i).Value;
+                if (notify.Duplicate)
+                    notify.NotifyDelegate.DynamicInvoke(result.Clone());
+                else
+                    if ((bool)notify.NotifyDelegate.DynamicInvoke(result))
+                        break;
+            }
             return result;
         }
 

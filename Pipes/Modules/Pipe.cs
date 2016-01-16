@@ -13,34 +13,96 @@ namespace Pipes.Modules
 {
     public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IClone
     {
+        private IProducerConsumerCollection<T> queue = null;
+
+        #region IInput<T>
         IProducerConsumerCollection<T> Pipes.Interfaces.IInput<T>.Queue
         {
             get 
-            { 
-                if(Input != null) 
-                    return Input.Queue;
+            {
+                if (Input != null)
+                {
+                    if (Input != this)
+                        return Input.Queue;
+                    else
+                        return queue;
+                }
                 return null;
             }
             set
             {
-                if(Input != null) 
-                    Input.Queue = value;
+                if (Input != null)
+                {
+                    if (Input != this)
+                        Input.Queue = value;
+                    else
+                        queue = value;
+                }                                      
             }
         }
+
+        [Configure(InitType = typeof(Input<>))]
+        public virtual IInput<T> Input
+        {
+            get;
+            set;
+        }
+
+        object Pipes.Interfaces.IInput<T>.PopObject()
+        {
+            return Input.PopObject();
+        }
+
+        bool Pipes.Interfaces.IInput<T>.PushObject(object element)
+        {
+            return Input.PushObject(element);
+        }
+
+        #endregion
+
+        #region IOutput<T>
+        [Configure(InitType = typeof(Output<>))]
+        public virtual IOutput<T> Output
+        {
+            get;
+            set;
+        }
+
         IProducerConsumerCollection<T> Pipes.Interfaces.IOutput<T>.Queue
         {
             get
             {
-                if(Output != null)
-                    return Output.Queue;
+                if (Output != null)
+                {
+                    if (Output != this)
+                        return Output.Queue;
+                    return queue;
+                }
                 return null;
             }
             set
             {
-                if(Output != null)
-                    Output.Queue = value;
+                if (Output != null)
+                {
+                    if (Output != this)
+                        Output.Queue = value;
+                    else
+                        queue = value;
+                }
             }
         }
+
+        bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
+        {
+            return Output.PushObject(element);
+        }
+
+        object Pipes.Interfaces.IOutput<T>.PopObject()
+        {
+            return Output.PopObject();
+        }
+
+        #endregion
 
         public override bool Initialize()
         {
@@ -50,6 +112,9 @@ namespace Pipes.Modules
                     InputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
                 if(OutputListeners == null)
                     OutputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
+                queue = new ConcurrentQueue<T>();
+                Input = this;
+                Output = this;
                 return true;
             }
             return false;
@@ -69,48 +134,32 @@ namespace Pipes.Modules
             set;
         }
 
-        [Configure(InitType = typeof(Input<>))]
-        public virtual IInput<T> Input
-        {
-            get;
-            set;
-        }
-
-        [Configure(InitType=typeof(Output<>))]
-        public virtual IOutput<T> Output
-        {
-            get;
-            set;
-        }
-
-        object Pipes.Interfaces.IInput<T>.PopObject()
-        {
-            return Input.PopObject();
-        }
-
-        object Pipes.Interfaces.IOutput<T>.PopObject()
-        {
-            return Output.PopObject();
-        }
-
-        bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
-        {
-            return Input.PushObject(element);
-        }
-
-        bool Pipes.Interfaces.IInput<T>.PushObject(object element)
-        {
-            return Input.PushObject(element);
-        }
-
         public virtual bool PushObject(object element)
         {
-            return Input.PushObject(element);
+            if (Input != null)
+            {
+                if (Input != this)
+                    return Input.PushObject(element);
+                else
+                    return (this as IInput<T>).Queue.TryAdd((T)element);
+            }
+            return false;
         }
 
         public virtual object PopObject()
         {
-            return Output.PopObject();
+            if (Output != null)
+            {
+                if (Output != this)
+                    return Output.PopObject();
+                else
+                {
+                    T result = default(T);
+                    if ((this as IOutput<T>).Queue.TryTake(out result))
+                        return result;
+                }
+            }
+            return null;            
         }
 
         public virtual T Pop()
@@ -123,10 +172,11 @@ namespace Pipes.Modules
             for (int i = 0; i < OutputListeners.Count; i++)
             {
                 INotify<T> notifier = OutputListeners.ElementAt(i).Value;
-                if(notifier.Duplicate)
+                if (notifier.Duplicate)
                     notifier.NotifyDelegate.DynamicInvoke(result.Clone());
                 else
-                    notifier.NotifyDelegate.DynamicInvoke(result);
+                    if ((bool)notifier.NotifyDelegate.DynamicInvoke(result))
+                        break;
             }
             return result;
         }
@@ -138,13 +188,17 @@ namespace Pipes.Modules
                 for (int i = 0; i < InputListeners.Count; i++)
                 {
                     INotify<T> notifier = InputListeners.ElementAt(i).Value;
-                    if(notifier.Duplicate)
+                    if (notifier.Duplicate)
                         notifier.NotifyDelegate.DynamicInvoke(element.Clone());
                     else
-                        notifier.NotifyDelegate.DynamicInvoke(element);
+                        if ((bool)notifier.NotifyDelegate.DynamicInvoke(element))
+                            break;
                 }
-                if (Input != this)
-                    return Input.Push(element);
+                if (Input != null)
+                {
+                    if (Input != this)
+                        return Input.Push(element);
+                }
                 return PushObject(element);
             }
             return false;

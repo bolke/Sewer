@@ -15,6 +15,8 @@ namespace Pipes.Interfaces
     {
         [Configure(InitType = typeof(ConcurrentQueue<>))]
         IProducerConsumerCollection<T> Queue { get; set; }
+        [Configure(DefaultValue=null)]
+        IOutput<T> Output { get; set; }
         void RegisterInputListener(INotify<T> inputListener);
         bool Push(T element);
         bool PushObject(object element);

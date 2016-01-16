@@ -12,8 +12,7 @@ namespace Pipes.Modules
 {
     public class Valve<T>:Pipe<T>, IValve<T> where T:IClone
     {
-        protected IInput<T> input = null;
-        protected IOutput<T> output = null;
+        protected IPipe<T> pipe = null;
         
         [Configure(DefaultValue=false)]
         public virtual bool IsOpen
@@ -74,8 +73,8 @@ namespace Pipes.Modules
         [Configure(DefaultValue=null)]
         public virtual IPipe<T> Pipe
         {
-            get;
-            set;
+            get { return pipe; }
+            set { pipe = value; }
         }
 
         [Configure]
@@ -83,16 +82,16 @@ namespace Pipes.Modules
         {
             get
             {
-                if(Pipe!=null)
+                if(pipe!=this && pipe != null)
                     return Pipe.Input;
-                return input;
+                return base.Input;
             }
             set
             {
-                if(Pipe != null)
+                if(pipe != this && pipe != null)
                     Pipe.Input = value;
                 else
-                    input = value;
+                    base.Input = value;
             }
         }
 
@@ -101,16 +100,16 @@ namespace Pipes.Modules
         {
             get
             {
-                if(Pipe!=null)
+                if (pipe != this && pipe != null)
                     return Pipe.Output;
-                return output;
+                return base.Output;
             }
             set
             {
-                if(Pipe != null)
+                if (pipe != this && pipe != null)
                     Pipe.Output = value;
                 else
-                    output = value;
+                    base.Output = value;
             }
         }
     }
