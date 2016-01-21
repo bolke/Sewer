@@ -157,7 +157,7 @@ namespace Pipes.Modules
                 if(InputListeners.ElementAt(i).Value.Duplicate && element.Duplicate)
                     InputListeners.ElementAt(i).Value.CallDelegate(element);
                 else if(InputListeners.ElementAt(i).Value.CallDelegate(element))
-                    break;
+                    return true;
             }
             if(Input != null && (Input != this))
                 return Input.Push(element);

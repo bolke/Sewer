@@ -53,7 +53,7 @@
     <Compile Include="Modules\Notify.cs" />
     <Compile Include="Abstracts\Output.cs" />
     <Compile Include="Modules\Pipe.cs" />
-    <Compile Include="Modules\Plant.cs" />
+    <Compile Include="Abstracts\Plant.cs" />
     <Compile Include="Modules\Valve.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

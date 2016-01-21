@@ -7,16 +7,13 @@ using Pipes.Interfaces;
 
 namespace Pipes.Modules
 {
-    public class Plant<T>: Pipe<T> where T: IMessage
+    public abstract class Plant<T>: Pipe<T> where T: IMessage
     {
+        public abstract T Process(T element);
+
         public override bool Push(T element)
         {
             return base.Push(Process(element));
-        }
-
-        public virtual T Process(T element)
-        {
-            return element;
         }
     }
 }

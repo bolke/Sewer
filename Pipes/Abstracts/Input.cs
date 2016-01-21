@@ -42,9 +42,8 @@ namespace Pipes.Modules
                     INotify notify = InputListeners.ElementAt(i).Value;
                     if (notify.Duplicate)
                         notify.NotifyDelegate.DynamicInvoke(element.Clone());
-                    else
-                        if ((bool)notify.NotifyDelegate.DynamicInvoke(element.Clone()))
-                            break;
+                    else if ((bool)notify.NotifyDelegate.DynamicInvoke(element.Clone()))
+                        return true;
                 }
                 return PushObject(element);
             }
