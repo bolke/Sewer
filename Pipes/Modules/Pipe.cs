@@ -37,7 +37,10 @@ namespace Pipes.Modules
 
         bool Pipes.Interfaces.IInput<T>.PushObject(object element)
         {
-            return Input.PushObject(element);
+            if(Input != null && Input != this)
+                Input.PushObject(element);
+            else
+                queue.TryAdd(element);
         }
 
         #endregion
