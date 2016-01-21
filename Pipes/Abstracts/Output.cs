@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Output<T>: Initiator, IOutput<T> where T:IClone
+    public abstract class Output<T>: Initiator, IOutput<T> where T: IMessage
     {
         [Configure]
         public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
@@ -18,12 +18,6 @@ namespace Pipes.Modules
             get;
             set;
         }
-
-        [Configure(InitType = typeof(ConcurrentQueue<>))]
-        public virtual IProducerConsumerCollection<T> Queue { get; set; }
-
-        [Configure(DefaultValue = null)]
-        public virtual IInput<T> Input { get; set; }
 
         public Output()
         {
@@ -54,25 +48,9 @@ namespace Pipes.Modules
             return result;
         }
 
-        public virtual object PopObject()
-        {
-            T result;
-            if(Queue.TryTake(out result))
-            {
-                return result;
-            }
-            return default(T);
-        }
+        public abstract object PopObject();
 
-        public virtual bool PushObject(object element)
-        {
-            if(element is T)
-            {
-                Queue.TryAdd((T)element);
-                return true;
-            }
-            return false;
-        }
+        public abstract bool PushObject(object element);
 
         public virtual void RegisterOutputListener(INotify<T> outputListener)
         {

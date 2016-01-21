@@ -48,10 +48,10 @@
     <Compile Include="Interfaces\IPipe.cs" />
     <Compile Include="Interfaces\IPlant.cs" />
     <Compile Include="Interfaces\IValve.cs" />
-    <Compile Include="Modules\Input.cs" />
+    <Compile Include="Abstracts\Input.cs" />
     <Compile Include="Modules\Message.cs" />
     <Compile Include="Modules\Notify.cs" />
-    <Compile Include="Modules\Output.cs" />
+    <Compile Include="Abstracts\Output.cs" />
     <Compile Include="Modules\Pipe.cs" />
     <Compile Include="Modules\Plant.cs" />
     <Compile Include="Modules\Valve.cs" />

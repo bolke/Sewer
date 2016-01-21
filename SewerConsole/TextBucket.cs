@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SewerConsole
 {
-    public class TextMessage: Message, IClone
+    public class TextMessage: Message, IMessage
     {
         public string content;
 

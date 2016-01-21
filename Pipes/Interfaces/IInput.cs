@@ -11,12 +11,9 @@ using Mod.Configuration.Properties;
 
 namespace Pipes.Interfaces
 {
-    public interface IInput<T>: IObjectContainer, IUnique where T:IClone
+    public interface IInput<T>: IObjectContainer, IUnique where T:IMessage
     {
-        [Configure(InitType = typeof(ConcurrentQueue<>))]
-        IProducerConsumerCollection<T> Queue { get; set; }
         [Configure(DefaultValue=null)]
-        IOutput<T> Output { get; set; }
         void RegisterInputListener(INotify<T> inputListener);
         bool Push(T element);
         bool PushObject(object element);

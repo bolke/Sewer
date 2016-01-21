@@ -9,7 +9,18 @@ using Mod.Configuration.Properties;
 
 namespace Pipes.Interfaces
 {
-    public interface IPipe<T>:IInput<T>, IOutput<T> where T:IClone
+    public interface IPipe<T>: IInput<T>, IOutput<T> where T: IMessage
     {
+        IInput<T> Input
+        {
+            get;
+            set;
+        }
+
+        IOutput<T> Output
+        {
+            get;
+            set;
+        }
     }
 }

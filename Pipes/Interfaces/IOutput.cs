@@ -11,12 +11,9 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IOutput<T>: IObjectContainer, IUnique where T:IClone
+    public interface IOutput<T>: IObjectContainer, IUnique where T: IMessage
     {
-        [Configure(InitType = typeof(ConcurrentQueue<>))]
-        IProducerConsumerCollection<T> Queue { get; set; }
         [Configure(DefaultValue=null)]
-        IInput<T> Input { get; set; }
         void RegisterOutputListener(INotify<T> outputListener);
         T Pop();
         bool PushObject(object element);

@@ -15,19 +15,20 @@ namespace SewerConsole
         static void Main(string[] args)
         {
             TextBucket t1 = new TextBucket();
-            TextBucket t2 = new TextBucket();
-            TextBucket t3 = new TextBucket();
+            Pipe<TextMessage> t2 = new Pipe<TextMessage>();
+            Pipe<IMessage> t3 = new Pipe<IMessage>();
+            TextBucket t4 = new TextBucket();
 
-            t1.RegisterInputListener(new Notify<TextMessage>(t2.Push) { Duplicate = true });
-            t1.RegisterInputListener(new Notify<TextMessage>(t3.Push) { Duplicate = true });
+            t2.Initialize();
+
+            t1.RegisterInputListener(new Notify<TextMessage>(t2.Push) { Duplicate = false });
+            t2.RegisterInputListener(new Notify<TextMessage>(t3.Push) { Duplicate = false });
+            t3.RegisterInputListener(new Notify<IMessage>(t4.Push) { Duplicate = false });
 
             t1.Push(new TextMessage() { content = "one" });
-
-            t2.Close();
-
             t1.Push(new TextMessage() { content = "two" });
 
-            TextMessage tm = t1.Pop();
+            TextMessage tm = t4.Pop();
             TextMessage tm2 = t1.Pop();
 
             Console.ReadLine();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IPlant<T>: IPipe<T> where T:IClone
+    public interface IPlant<T>: IPipe<T> where T: IMessage
     {
         T Process(T element);
     }

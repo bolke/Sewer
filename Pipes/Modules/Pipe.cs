@@ -11,37 +11,12 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IClone
+    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IMessage
     {
         private IProducerConsumerCollection<T> queue = null;
 
         #region IInput<T>
-        IProducerConsumerCollection<T> Pipes.Interfaces.IInput<T>.Queue
-        {
-            get 
-            {
-                if (Input != null)
-                {
-                    if (Input != this)
-                        return Input.Queue;
-                    else
-                        return queue;
-                }
-                return null;
-            }
-            set
-            {
-                if (Input != null)
-                {
-                    if (Input != this)
-                        Input.Queue = value;
-                    else
-                        queue = value;
-                }                                      
-            }
-        }
-
-        [Configure(InitType = typeof(Input<>))]
+        [Configure(DefaultValue=null)]
         public virtual IInput<T> Input
         {
             get;
@@ -61,35 +36,11 @@ namespace Pipes.Modules
         #endregion
 
         #region IOutput<T>
-        [Configure(InitType = typeof(Output<>))]
+        [Configure(DefaultValue=null)]
         public virtual IOutput<T> Output
         {
             get;
             set;
-        }
-
-        IProducerConsumerCollection<T> Pipes.Interfaces.IOutput<T>.Queue
-        {
-            get
-            {
-                if (Output != null)
-                {
-                    if (Output != this)
-                        return Output.Queue;
-                    return queue;
-                }
-                return null;
-            }
-            set
-            {
-                if (Output != null)
-                {
-                    if (Output != this)
-                        Output.Queue = value;
-                    else
-                        queue = value;
-                }
-            }
         }
 
         bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
@@ -138,10 +89,10 @@ namespace Pipes.Modules
         {
             if (Input != null)
             {
-                if (Input != this)
-                    return Input.PushObject(element);
+                if(Input == this)
+                    queue.TryAdd((T)element);
                 else
-                    return (this as IInput<T>).Queue.TryAdd((T)element);
+                    return Input.PushObject(element);
             }
             return false;
         }
@@ -150,14 +101,15 @@ namespace Pipes.Modules
         {
             if (Output != null)
             {
-                if (Output != this)
-                    return Output.PopObject();
-                else
+                if (Output == this)
                 {
-                    T result = default(T);
-                    if ((this as IOutput<T>).Queue.TryTake(out result))
-                        return result;
+                    T result;
+                    if(!queue.TryTake(out result))
+                        result = default(T);
+                    return result;
                 }
+                else
+                    return Output.PopObject();
             }
             return null;            
         }
