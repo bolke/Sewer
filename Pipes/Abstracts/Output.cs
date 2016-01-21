@@ -13,7 +13,7 @@ namespace Pipes.Modules
     public abstract class Output<T>: Initiator, IOutput<T> where T: IMessage
     {
         [Configure]
-        public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
+        public ConcurrentDictionary<INotify, INotify> OutputListeners
         {
             get;
             set;
@@ -27,7 +27,7 @@ namespace Pipes.Modules
         {
             if(base.Initialize())
             {
-                OutputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
+                OutputListeners = new ConcurrentDictionary<INotify, INotify>();
                 return true;
             }
             return false;
@@ -37,14 +37,7 @@ namespace Pipes.Modules
         {
             T result = (T)PopObject();
             for (int i = 0; i < OutputListeners.Count; i++)
-            {
-                INotify<T> notify = OutputListeners.ElementAt(i).Value;
-                if (notify.Duplicate)
-                    notify.NotifyDelegate.DynamicInvoke(result.Clone());
-                else
-                    if ((bool)notify.NotifyDelegate.DynamicInvoke(result))
-                        break;
-            }
+                OutputListeners.ElementAt(i).Value.CallDelegate(result);
             return result;
         }
 
@@ -52,9 +45,19 @@ namespace Pipes.Modules
 
         public abstract bool PushObject(object element);
 
-        public virtual void RegisterOutputListener(INotify<T> outputListener)
+        public virtual void AddOutputListener(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
+        }
+
+        bool NotifyPush(IMessage element)
+        {
+            return PushObject(element);
+        }
+        
+        public INotify FabricateOutputNotifier(bool Duplicate = true)
+        {
+            return new Notify(NotifyPush) { Duplicate = Duplicate };
         }
     }
 }

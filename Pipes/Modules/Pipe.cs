@@ -23,6 +23,13 @@ namespace Pipes.Modules
             set;
         }
 
+        public INotify FabricateInputNotifier(bool Duplicate = true)
+        {
+            if(Input != null && Input != this)
+                return Input.FabricateInputNotifier(Duplicate);
+            return new Notify(NotifyPush) { Duplicate = Duplicate };
+        }
+
         object Pipes.Interfaces.IInput<T>.PopObject()
         {
             return Input.PopObject();
@@ -48,6 +55,13 @@ namespace Pipes.Modules
             return Output.PushObject(element);
         }
 
+        public INotify FabricateOutputNotifier(bool Duplicate = true)
+        {
+            if(Output != null && Output != this)
+                return Output.FabricateOutputNotifier(Duplicate);
+            return new Notify(NotifyPush) { Duplicate = Duplicate };
+        }
+
         object Pipes.Interfaces.IOutput<T>.PopObject()
         {
             return Output.PopObject();
@@ -60,9 +74,9 @@ namespace Pipes.Modules
             if(base.Initialize())
             {
                 if(InputListeners == null)
-                    InputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
+                    InputListeners = new ConcurrentDictionary<INotify, INotify>();
                 if(OutputListeners == null)
-                    OutputListeners = new ConcurrentDictionary<INotify<T>, INotify<T>>();
+                    OutputListeners = new ConcurrentDictionary<INotify, INotify>();
                 queue = new ConcurrentQueue<T>();
                 Input = this;
                 Output = this;
@@ -71,15 +85,20 @@ namespace Pipes.Modules
             return false;
         }
 
+        bool NotifyPush(IMessage element)
+        {
+            return Push((T)element);
+        }
+
         [Configure(DefaultValue=null)]
-        public ConcurrentDictionary<INotify<T>, INotify<T>> InputListeners
+        public ConcurrentDictionary<INotify, INotify> InputListeners
         {
             get;
             set;
         }
 
         [Configure(DefaultValue=null)]
-        public ConcurrentDictionary<INotify<T>, INotify<T>> OutputListeners
+        public ConcurrentDictionary<INotify, INotify> OutputListeners
         {
             get;
             set;
@@ -90,7 +109,7 @@ namespace Pipes.Modules
             if (Input != null)
             {
                 if(Input == this)
-                    queue.TryAdd((T)element);
+                    return queue.TryAdd((T)element);
                 else
                     return Input.PushObject(element);
             }
@@ -121,47 +140,36 @@ namespace Pipes.Modules
                 result = (T)Output.Pop();
             else
                 result = (T)PopObject();
-            for (int i = 0; i < OutputListeners.Count; i++)
+            for(int i = 0; i < OutputListeners.Count; i++)
             {
-                INotify<T> notifier = OutputListeners.ElementAt(i).Value;
-                if (notifier.Duplicate)
-                    notifier.NotifyDelegate.DynamicInvoke(result.Clone());
-                else
-                    if ((bool)notifier.NotifyDelegate.DynamicInvoke(result))
-                        break;
+                if(OutputListeners.ElementAt(i).Value.Duplicate && result.Duplicate)
+                    OutputListeners.ElementAt(i).Value.CallDelegate(result);
+                else if(OutputListeners.ElementAt(i).Value.CallDelegate(result))
+                    break;  
             }
             return result;
         }
 
         public virtual bool Push(T element)
         {
-            if(element is T)
+            for(int i = 0; i < InputListeners.Count; i++)
             {
-                for (int i = 0; i < InputListeners.Count; i++)
-                {
-                    INotify<T> notifier = InputListeners.ElementAt(i).Value;
-                    if (notifier.Duplicate)
-                        notifier.NotifyDelegate.DynamicInvoke(element.Clone());
-                    else
-                        if ((bool)notifier.NotifyDelegate.DynamicInvoke(element))
-                            break;
-                }
-                if (Input != null)
-                {
-                    if (Input != this)
-                        return Input.Push(element);
-                }
-                return PushObject(element);
+                if(InputListeners.ElementAt(i).Value.Duplicate && element.Duplicate)
+                    InputListeners.ElementAt(i).Value.CallDelegate(element);
+                else if(InputListeners.ElementAt(i).Value.CallDelegate(element))
+                    break;
             }
-            return false;
+            if(Input != null && (Input != this))
+                return Input.Push(element);
+            return PushObject(element);
         }
 
-        public virtual void RegisterInputListener(INotify<T> inputListener)
+        public virtual void AddInputListener(INotify inputListener)
         {
             InputListeners[inputListener] = inputListener;
         }
 
-        public virtual void RegisterOutputListener(INotify<T> outputListener)
+        public virtual void AddOutputListener(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
         }

@@ -19,11 +19,12 @@ namespace SewerConsole
             Pipe<IMessage> t3 = new Pipe<IMessage>();
             TextBucket t4 = new TextBucket();
 
+            t3.Initialize();
             t2.Initialize();
 
-            t1.RegisterInputListener(new Notify<TextMessage>(t2.Push) { Duplicate = false });
-            t2.RegisterInputListener(new Notify<TextMessage>(t3.Push) { Duplicate = false });
-            t3.RegisterInputListener(new Notify<IMessage>(t4.Push) { Duplicate = false });
+            t1.AddInputListener(t2.FabricateInputNotifier(false));
+            t2.AddInputListener(t3.FabricateInputNotifier(false));
+            t3.AddInputListener(t4.FabricateInputNotifier(false));
 
             t1.Push(new TextMessage() { content = "one" });
             t1.Push(new TextMessage() { content = "two" });

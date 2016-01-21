@@ -8,25 +8,36 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Notify<T>: INotify<T>
+    public class Notify: INotify
     {
-        public Notify(Func<T, bool> notifyDelegate)
+        public Notify(Func<IMessage, bool> notifyDelegate)
         {
             NotifyDelegate = notifyDelegate;
             Duplicate = true;
         }
-      
-        public Func<T, bool> NotifyDelegate
+
+        public virtual Func<IMessage, bool> NotifyDelegate
         {
             get;
             set;
         }
 
         [Configure(DefaultValue=true)]
-        public bool Duplicate
+        public virtual bool Duplicate
         {
             get;
             set;
+        }
+
+        public virtual bool CallDelegate(IMessage message)
+        {
+            if(NotifyDelegate != null)
+            {
+                if(Duplicate && message.Duplicate)
+                    return NotifyDelegate.Invoke(message.Clone() as IMessage);
+                return NotifyDelegate.Invoke(message);
+            }
+            return false;
         }
     }
 }

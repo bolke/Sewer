@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface INotify<T>
+    public interface INotify
     {
         [Configure(DefaultValue=true)]
         bool Duplicate { get; set; }
-        Func<T, bool> NotifyDelegate { get; set; }
+        Func<IMessage, bool> NotifyDelegate { get; set; }
+        bool CallDelegate(IMessage message);
     }
 }

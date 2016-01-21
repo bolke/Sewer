@@ -13,8 +13,8 @@ namespace Pipes.Interfaces
 {
     public interface IInput<T>: IObjectContainer, IUnique where T:IMessage
     {
-        [Configure(DefaultValue=null)]
-        void RegisterInputListener(INotify<T> inputListener);
+        INotify FabricateInputNotifier(bool Duplicate = false);
+        void AddInputListener(INotify inputListener);
         bool Push(T element);
         bool PushObject(object element);
         object PopObject();
