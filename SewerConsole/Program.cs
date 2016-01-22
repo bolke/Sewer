@@ -39,14 +39,19 @@ namespace SewerConsole
             t2.Initialize();
 
             t1.Input = t2;
-    //        t2.Input = plant;
-    //        plant.Input = t3;
+            t2.Input = plant;
+            plant.Input = t3;
             t3.Input = t4;
 
-    //        t1.AddInputListener(t2.FabricateInputNotifier(false));
-            t2.AddInputListener(plant.FabricateInputNotifier(false));
-            plant.AddInputListener(t3.FabricateInputNotifier(false));
-    //        t3.AddInputListener(t4.FabricateInputNotifier(false));
+            t1.AddInputNotify(t2.FabricateInputNotify());
+            t2.AddInputNotify(t2.FabricateInputNotify());
+            plant.AddInputNotify(t2.FabricateInputNotify());
+            t3.AddInputNotify(t2.FabricateInputNotify());
+
+            t1.AddInputNotify(t4.FabricateInputNotify());
+            t2.AddInputNotify(t4.FabricateInputNotify());
+            plant.AddInputNotify(t4.FabricateInputNotify());
+            t3.AddInputNotify(t4.FabricateInputNotify());
 
             t1.Push(new TextMessage() { content = "one" });
             t1.Push(new TextMessage() { content = "two" });

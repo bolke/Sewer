@@ -1,4 +1,5 @@
 ﻿using Mod.Configuration.Properties;
+using Mod.Interfaces.Config;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
 using System;
@@ -37,7 +38,7 @@ namespace Pipes.Modules
         {
             T result = (T)PopObject();
             for (int i = 0; i < OutputListeners.Count; i++)
-                OutputListeners.ElementAt(i).Value.CallDelegate(result);
+                OutputListeners.ElementAt(i).Value.CallDelegate(this);
             return result;
         }
 
@@ -45,19 +46,9 @@ namespace Pipes.Modules
 
         public abstract bool PushObject(object element);
 
-        public virtual void AddOutputListener(INotify outputListener)
+        public virtual void AddOutputNotify(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
-        }
-
-        bool NotifyPush(IMessage element)
-        {
-            return PushObject(element);
-        }
-        
-        public INotify FabricateOutputNotifier(bool Duplicate = true)
-        {
-            return new Notify(NotifyPush) { Duplicate = Duplicate };
         }
     }
 }

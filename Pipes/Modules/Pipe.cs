@@ -1,4 +1,5 @@
 ﻿using Mod.Configuration.Properties;
+using Mod.Interfaces.Config;
 using Mod.Interfaces.Containers;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T> where T:IMessage
+    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T>, IInputListener where T:IMessage
     {
         private IProducerConsumerCollection<T> queue = null;
 
@@ -23,13 +24,6 @@ namespace Pipes.Modules
             set;
         }
 
-        public INotify FabricateInputNotifier(bool Duplicate = true)
-        {
-            if(Input != null && Input != this)
-                return Input.FabricateInputNotifier(Duplicate);
-            return new Notify(NotifyPush) { Duplicate = Duplicate };
-        }
-
         object Pipes.Interfaces.IInput<T>.PopObject()
         {
             return Input.PopObject();
@@ -38,9 +32,10 @@ namespace Pipes.Modules
         bool Pipes.Interfaces.IInput<T>.PushObject(object element)
         {
             if(Input != null && Input != this)
-                Input.PushObject(element);
-            else
-                queue.TryAdd(element);
+                return Input.PushObject(element);
+            else if(element.GetType().IsAssignableFrom(typeof(T)))
+                return queue.TryAdd((T)element);
+            return false;
         }
 
         #endregion
@@ -56,13 +51,6 @@ namespace Pipes.Modules
         bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
         {
             return Output.PushObject(element);
-        }
-
-        public INotify FabricateOutputNotifier(bool Duplicate = true)
-        {
-            if(Output != null && Output != this)
-                return Output.FabricateOutputNotifier(Duplicate);
-            return new Notify(NotifyPush) { Duplicate = Duplicate };
         }
 
         object Pipes.Interfaces.IOutput<T>.PopObject()
@@ -86,11 +74,6 @@ namespace Pipes.Modules
                 return true;
             }
             return false;
-        }
-
-        bool NotifyPush(IMessage element)
-        {
-            return Push((T)element);
         }
 
         [Configure(DefaultValue=null)]
@@ -144,37 +127,38 @@ namespace Pipes.Modules
             else
                 result = (T)PopObject();
             for(int i = 0; i < OutputListeners.Count; i++)
-            {
-                if(OutputListeners.ElementAt(i).Value.Duplicate && result.Duplicate)
-                    OutputListeners.ElementAt(i).Value.CallDelegate(result);
-                else if(OutputListeners.ElementAt(i).Value.CallDelegate(result))
-                    break;  
-            }
+                OutputListeners.ElementAt(i).Value.CallDelegate(this);
             return result;
         }
 
         public virtual bool Push(T element)
         {
             for(int i = 0; i < InputListeners.Count; i++)
-            {
-                if(InputListeners.ElementAt(i).Value.Duplicate && element.Duplicate)
-                    InputListeners.ElementAt(i).Value.CallDelegate(element);
-                else if(InputListeners.ElementAt(i).Value.CallDelegate(element))
-                    return true;
-            }
+                InputListeners.ElementAt(i).Value.CallDelegate(this);
             if(Input != null && (Input != this))
                 return Input.Push(element);
             return PushObject(element);
         }
 
-        public virtual void AddInputListener(INotify inputListener)
+        public virtual void AddInputNotify(INotify inputListener)
         {
             InputListeners[inputListener] = inputListener;
         }
 
-        public virtual void AddOutputListener(INotify outputListener)
+        public virtual void AddOutputNotify(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
+        }
+
+        protected bool NotifyInput(IUnique caller)
+        {
+            Console.WriteLine("STUFF COMES IN " + caller.GetType().Name);
+            return true;
+        }
+
+        public INotify FabricateInputNotify()
+        {
+            return new Notify(NotifyInput);
         }
     }
 }

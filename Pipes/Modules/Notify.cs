@@ -1,4 +1,5 @@
 ﻿using Mod.Configuration.Properties;
+using Mod.Interfaces.Config;
 using Pipes.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,33 +11,21 @@ namespace Pipes.Modules
 {
     public class Notify: INotify
     {
-        public Notify(Func<IMessage, bool> notifyDelegate)
+        public Notify(Func<IUnique, bool> notifyDelegate)
         {
             NotifyDelegate = notifyDelegate;
-            Duplicate = true;
         }
 
-        public virtual Func<IMessage, bool> NotifyDelegate
+        public virtual Func<IUnique, bool> NotifyDelegate
         {
             get;
             set;
         }
 
-        [Configure(DefaultValue=true)]
-        public virtual bool Duplicate
-        {
-            get;
-            set;
-        }
-
-        public virtual bool CallDelegate(IMessage message)
+        public virtual bool CallDelegate(IUnique caller)
         {
             if(NotifyDelegate != null)
-            {
-                if(Duplicate && message.Duplicate)
-                    return NotifyDelegate.Invoke(message.Clone() as IMessage);
-                return NotifyDelegate.Invoke(message);
-            }
+                return NotifyDelegate.Invoke(caller);
             return false;
         }
     }

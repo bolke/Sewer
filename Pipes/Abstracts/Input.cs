@@ -1,4 +1,5 @@
 ﻿using Mod.Configuration.Properties;
+using Mod.Interfaces.Config;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
 using System;
@@ -37,36 +38,23 @@ namespace Pipes.Modules
         {
             if(element is T)
             {
-                for (int i = 0; i < InputListeners.Count; i++)
+                if(PushObject(element))
                 {
-                    INotify notify = InputListeners.ElementAt(i).Value;
-                    if (notify.Duplicate)
-                        notify.NotifyDelegate.DynamicInvoke(element.Clone());
-                    else if ((bool)notify.NotifyDelegate.DynamicInvoke(element.Clone()))
-                        return true;
+                    for(int i = 0; i < InputListeners.Count; i++)
+                        InputListeners.ElementAt(i).Value.CallDelegate(this);
+                    return true;
                 }
-                return PushObject(element);
             }
             return false;
-        }
-
-        bool NotifyPush(IMessage element)
-        {
-            return Push((T)element);
         }
 
         public abstract object PopObject();
 
         public abstract bool PushObject(object element);
 
-        public virtual void AddInputListener(INotify inputListener)
+        public virtual void AddInputNotify(INotify inputListener)
         {
             InputListeners[inputListener] = inputListener;
-        }
-
-        public INotify FabricateInputNotifier(bool Duplicate = false)
-        {
-            return new Notify(NotifyPush) { Duplicate = Duplicate };
         }
     }
 }

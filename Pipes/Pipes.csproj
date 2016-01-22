@@ -42,9 +42,11 @@
   <ItemGroup>
     <Compile Include="Interfaces\IClone.cs" />
     <Compile Include="Interfaces\IInput.cs" />
+    <Compile Include="Interfaces\IInputListener.cs" />
     <Compile Include="Interfaces\INotify.cs" />
     <Compile Include="Interfaces\IOutput.cs" />
     <Compile Include="Interfaces\IMessage.cs" />
+    <Compile Include="Interfaces\IOutputListener.cs" />
     <Compile Include="Interfaces\IPipe.cs" />
     <Compile Include="Interfaces\IPlant.cs" />
     <Compile Include="Interfaces\IValve.cs" />

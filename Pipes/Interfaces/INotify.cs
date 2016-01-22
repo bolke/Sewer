@@ -8,11 +8,17 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
+    public interface ITransfer
+    {
+        [Configure(DefaultValue = true)]
+        bool Duplicate { get; set; }
+        Func<IMessage, bool> TransferDelegate { get; set; }
+        bool CallDelegate(IMessage message);
+    }
+
     public interface INotify
     {
-        [Configure(DefaultValue=true)]
-        bool Duplicate { get; set; }
-        Func<IMessage, bool> NotifyDelegate { get; set; }
-        bool CallDelegate(IMessage message);
+        Func<IUnique,bool> NotifyDelegate { get; set; }
+        bool CallDelegate(IUnique caller);
     }
 }

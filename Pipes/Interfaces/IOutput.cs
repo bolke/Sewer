@@ -13,8 +13,7 @@ namespace Pipes.Interfaces
 {
     public interface IOutput<T>: IObjectContainer, IUnique where T: IMessage
     {
-        INotify FabricateOutputNotifier(bool Duplicate = false);
-        void AddOutputListener(INotify outputListener);
+        void AddOutputNotify(INotify outputNotify);
         T Pop();
         bool PushObject(object element);
         object PopObject();
