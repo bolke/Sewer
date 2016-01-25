@@ -56,13 +56,14 @@
     <Compile Include="Abstracts\Output.cs" />
     <Compile Include="Modules\Pipe.cs" />
     <Compile Include="Abstracts\Plant.cs" />
+    <Compile Include="Modules\Pump.cs" />
     <Compile Include="Modules\Valve.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Mod\ModConfig\ModConfig.csproj">
+    <ProjectReference Include="..\..\Mod\ModConfig\Mod.csproj">
       <Project>{048e7ef0-d4a3-4ee4-9620-b093dcf4b5b6}</Project>
-      <Name>ModConfig</Name>
+      <Name>Mod</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

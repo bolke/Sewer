@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IValve<T>: IPipe<T> where T: IMessage
+    public interface IValve<T>: IPipe<T> where T: class, IMessage
     {
         [Configure(DefaultValue=null)]
         IPipe<T> Pipe { get; set; }

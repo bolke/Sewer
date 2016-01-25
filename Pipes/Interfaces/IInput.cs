@@ -11,11 +11,16 @@ using Mod.Configuration.Properties;
 
 namespace Pipes.Interfaces
 {
-    public interface IInput<T>: IObjectContainer, IUnique where T:IMessage
+    public interface IInput: IObjectContainer, IUnique
+    {
+        bool PushIMessage(IMessage item);
+    }
+
+    public interface IInput<T>: IInput where T:IMessage
     {
         void AddInputNotify(INotify inputNotify);
         bool Push(T element);
-        bool PushObject(object element);
-        object PopObject();
+        new bool PushObject(object element);
+        new object PopObject();
     }
 }

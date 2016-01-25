@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Pipe<T>:Initiator, IPipe<T>, IInput<T>, IOutput<T>, IInputListener where T:IMessage
+    public class Pipe<T>: Lockable, IPipe<T>, IInput<T>, IOutput<T> where T: class, IMessage
     {
         private IProducerConsumerCollection<T> queue = null;
 
@@ -69,8 +69,10 @@ namespace Pipes.Modules
                 if(OutputListeners == null)
                     OutputListeners = new ConcurrentDictionary<INotify, INotify>();
                 queue = new ConcurrentQueue<T>();
-                Input = this;
-                Output = this;
+                if(Input == null)
+                    Input = this;
+                if(Output == null)
+                    Output = this;
                 return true;
             }
             return false;
@@ -133,11 +135,21 @@ namespace Pipes.Modules
 
         public virtual bool Push(T element)
         {
-            for(int i = 0; i < InputListeners.Count; i++)
-                InputListeners.ElementAt(i).Value.CallDelegate(this);
-            if(Input != null && (Input != this))
-                return Input.Push(element);
-            return PushObject(element);
+            bool result = false;
+            if(element != null)
+            {
+                if(Input != null && (Input != this))
+                    result = Input.Push(element);
+                else
+                    result = PushObject(element);
+
+                if(result)
+                {
+                    for(int i = 0; i < InputListeners.Count; i++)
+                        InputListeners.ElementAt(i).Value.CallDelegate(this);
+                }
+            }
+            return result;
         }
 
         public virtual void AddInputNotify(INotify inputListener)
@@ -150,15 +162,15 @@ namespace Pipes.Modules
             OutputListeners[outputListener] = outputListener;
         }
 
-        protected bool NotifyInput(IUnique caller)
+        public virtual bool PushIMessage(IMessage item)
         {
-            Console.WriteLine("STUFF COMES IN " + caller.GetType().Name);
-            return true;
+            return Push(item as T);
         }
 
-        public INotify FabricateInputNotify()
+
+        public virtual IMessage PopIMessage()
         {
-            return new Notify(NotifyInput);
+            return Pop();
         }
     }
 }

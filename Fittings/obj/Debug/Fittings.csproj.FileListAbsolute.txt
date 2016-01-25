@@ -1,0 +1,9 @@
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\obj\Debug\Fittings.csprojResolveAssemblyReference.cache
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\Fittings.dll
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\Fittings.pdb
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\ModConfig.dll
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\Pipes.dll
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\ModConfig.pdb
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\bin\Debug\Pipes.pdb
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\obj\Debug\Fittings.dll
+F:\FearNot\Projects\Running_Projects\061_Pavus\software\Sewer\Fittings\obj\Debug\Fittings.pdb

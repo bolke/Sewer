@@ -9,7 +9,7 @@ using Mod.Configuration.Properties;
 
 namespace Pipes.Interfaces
 {
-    public interface IPipe<T>: IInput<T>, IOutput<T> where T: IMessage
+    public interface IPipe<T>: IInput<T>, IOutput<T> where T: class, IMessage
     {
         IInput<T> Input
         {

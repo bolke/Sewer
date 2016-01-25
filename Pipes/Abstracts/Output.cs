@@ -1,5 +1,6 @@
 ﻿using Mod.Configuration.Properties;
 using Mod.Interfaces.Config;
+using Mod.Interfaces.Containers;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
 using System;
@@ -11,7 +12,16 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public abstract class Output<T>: Initiator, IOutput<T> where T: IMessage
+    public abstract class Output: Lockable, IObjectContainer
+    {
+        public abstract IMessage PopIMessage();
+
+        public abstract object PopObject();
+
+        public abstract bool PushObject(object element);
+    }
+
+    public abstract class Output<T>: Output, IOutput<T> where T: class, IMessage
     {
         [Configure]
         public ConcurrentDictionary<INotify, INotify> OutputListeners
@@ -42,13 +52,15 @@ namespace Pipes.Modules
             return result;
         }
 
-        public abstract object PopObject();
-
-        public abstract bool PushObject(object element);
-
         public virtual void AddOutputNotify(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
         }
+
+        public override IMessage PopIMessage()
+        {
+            return this.Pop();
+        }
+
     }
 }

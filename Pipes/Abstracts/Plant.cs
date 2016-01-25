@@ -7,7 +7,7 @@ using Pipes.Interfaces;
 
 namespace Pipes.Modules
 {
-    public abstract class Plant<T>: Pipe<T> where T: IMessage
+    public abstract class Plant<T>: Pipe<T> where T: class, IMessage
     {
         public abstract T Process(T element);
 

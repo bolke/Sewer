@@ -1,4 +1,6 @@
-﻿using Mod.Configuration.Section;
+﻿using Fittings.Modules;
+using Mod.Configuration.Section;
+using Mod.Interfaces.Containers;
 using Pipes.Interfaces;
 using Pipes.Modules;
 using System;
@@ -10,55 +12,45 @@ using System.Threading.Tasks;
 
 namespace SewerConsole
 {
-    public class MagicPlant<T>: Plant<T> where T:IMessage
-    {
-        public MagicPlant()
-        {
-            Initialize();
-        }
-
-        public override T Process(T element)
-        {
-            if(element is TextMessage)
-                (element as TextMessage).content += "nope";
-            return element;
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
         {
-            TextBucket t1 = new TextBucket();
-            Pipe<TextMessage> t2 = new Pipe<TextMessage>();
-            Plant<TextMessage> plant = new MagicPlant<TextMessage>();
-            Pipe<TextMessage> t3 = new Pipe<TextMessage>();
-            TextBucket t4 = new TextBucket();
+            BufferedInput<TextMessage> bufferIn = new BufferedInput<TextMessage>();
+            BufferedOutput<TextMessage> bufferOut = new BufferedOutput<TextMessage>();
 
-            t3.Initialize();
-            t2.Initialize();
+            bufferIn.Initialize();
+            bufferOut.Initialize();
 
-            t1.Input = t2;
-            t2.Input = plant;
-            plant.Input = t3;
-            t3.Input = t4;
+            Pump<TextMessage> pump = new Pump<TextMessage>();
+            pump.Initialize();
+            pump.Start();
 
-            t1.AddInputNotify(t2.FabricateInputNotify());
-            t2.AddInputNotify(t2.FabricateInputNotify());
-            plant.AddInputNotify(t2.FabricateInputNotify());
-            t3.AddInputNotify(t2.FabricateInputNotify());
+            SerialFitting<TextMessage> serial = new SerialFitting<TextMessage>();
+            serial.Initialize();
+            serial.SerialPort.PortName = "COM11";
+            serial.Open();
 
-            t1.AddInputNotify(t4.FabricateInputNotify());
-            t2.AddInputNotify(t4.FabricateInputNotify());
-            plant.AddInputNotify(t4.FabricateInputNotify());
-            t3.AddInputNotify(t4.FabricateInputNotify());
+            pump.AddFlow(serial.Output, bufferIn);// Enqueue(new Tuple<IObjectContainer, IObjectContainer>(serial.Output, bufferIn));
+            pump.AddFlow(bufferOut, serial.Input);// Flows.Enqueue(new Tuple<IObjectContainer, IObjectContainer>(bufferOut, serial.Input));
 
-            t1.Push(new TextMessage() { content = "one" });
-            t1.Push(new TextMessage() { content = "two" });
+            while(true)
+            {
+                bufferOut.PushObject(new TextMessage() { Content = "kaas\n\r\0sdfsfd" });
+                bufferOut.PushObject(new TextMessage() { Content = "worst\n\r" });
 
-             TextMessage tm = t4.Pop();
-            TextMessage tm2 = t1.Pop();
+                TextMessage pop = bufferIn.PopObject() as TextMessage;
+                if(pop != null)
+                {
+                    Console.WriteLine(pop.ToString());
+                }
 
+
+                Thread.Sleep(100);
+            }
+
+            serial.Close();
+            
             Console.ReadLine();
         }
     }

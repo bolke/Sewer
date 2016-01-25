@@ -11,11 +11,15 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IOutput<T>: IObjectContainer, IUnique where T: IMessage
+    public interface IOutput: IObjectContainer, IUnique
+    {
+        IMessage PopIMessage();
+    }
+    public interface IOutput<T>: IOutput where T: class, IMessage
     {
         void AddOutputNotify(INotify outputNotify);
         T Pop();
-        bool PushObject(object element);
-        object PopObject();
+        new bool PushObject(object element);
+        new object PopObject();
     }
 }

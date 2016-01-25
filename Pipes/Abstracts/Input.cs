@@ -1,5 +1,6 @@
 ﻿using Mod.Configuration.Properties;
 using Mod.Interfaces.Config;
+using Mod.Interfaces.Containers;
 using Mod.Modules.Abstracts;
 using Pipes.Interfaces;
 using System;
@@ -11,7 +12,15 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public abstract class Input<T>: Initiator, IInput<T> where T: IMessage
+    public abstract class Input: Lockable, IObjectContainer
+    {
+        public abstract bool PushIMessage(IMessage item);
+         public abstract object PopObject();
+
+         public abstract bool PushObject(object element);
+    }
+
+    public abstract class Input<T>: Input, IInput<T> where T: class, IMessage
     {
         [Configure]
         public ConcurrentDictionary<INotify, INotify> InputListeners
@@ -36,7 +45,7 @@ namespace Pipes.Modules
 
         public virtual bool Push(T element)
         {
-            if(element is T)
+            if(element != null)
             {
                 if(PushObject(element))
                 {
@@ -48,13 +57,16 @@ namespace Pipes.Modules
             return false;
         }
 
-        public abstract object PopObject();
-
-        public abstract bool PushObject(object element);
-
         public virtual void AddInputNotify(INotify inputListener)
         {
             InputListeners[inputListener] = inputListener;
+        }
+
+        public override bool PushIMessage(IMessage item)
+        {
+            if(typeof(T).IsAssignableFrom(item.GetType()))
+                return Push((T)item);
+            return false;
         }
     }
 }

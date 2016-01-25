@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Valve<T>: Pipe<T>, IValve<T> where T: IMessage
+    public class Valve<T>: Pipe<T>, IValve<T> where T: class, IMessage
     {
         protected IPipe<T> pipe = null;
         
@@ -41,7 +41,6 @@ namespace Pipes.Modules
             return false;          
         }
 
-
         public override T Pop()
         {
             if(IsOpen)
@@ -49,7 +48,7 @@ namespace Pipes.Modules
             return default(T);
         }
 
-        public override bool Push(T element)
+        public override bool Push(T element) 
         {
             if(IsOpen)
                 return base.Push(element);
