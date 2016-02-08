@@ -51,6 +51,8 @@
     <Compile Include="Interfaces\IPlant.cs" />
     <Compile Include="Interfaces\IValve.cs" />
     <Compile Include="Abstracts\Input.cs" />
+    <Compile Include="Modules\BufferedInput.cs" />
+    <Compile Include="Modules\BufferedOutput.cs" />
     <Compile Include="Modules\Message.cs" />
     <Compile Include="Modules\Notify.cs" />
     <Compile Include="Abstracts\Output.cs" />

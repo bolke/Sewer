@@ -15,6 +15,7 @@ namespace Pipes.Interfaces
     {
         IMessage PopIMessage();
     }
+
     public interface IOutput<T>: IOutput where T: class, IMessage
     {
         void AddOutputNotify(INotify outputNotify);

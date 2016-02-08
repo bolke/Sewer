@@ -12,16 +12,42 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public class Pipe<T>: Lockable, IPipe<T>, IInput<T>, IOutput<T> where T: class, IMessage
+    public class Pipe<T> : Lockable, IPipe<T>, IInput<T>, IOutput<T> where T : class, IMessage
     {
         private IProducerConsumerCollection<T> queue = null;
 
         #region IInput<T>
-        [Configure(DefaultValue=null)]
+        [Configure(DefaultValue = null)]
         public virtual IInput<T> Input
         {
             get;
             set;
+        }
+
+        [Configure(DefaultValue = null)]
+        public ConcurrentDictionary<INotify, INotify> InputListeners
+        {
+            get;
+            set;
+        }
+
+        public virtual bool Push(T element)
+        {
+            bool result = false;
+            if (element != null)
+            {
+                if (Input != null && (Input != this))
+                    result = Input.Push(element);
+                else
+                    result = PushObject(element);
+
+                if (result)
+                {
+                    for (int i = 0; i < InputListeners.Count; i++)
+                        InputListeners.ElementAt(i).Value.CallDelegate(this);
+                }
+            }
+            return result;
         }
 
         object Pipes.Interfaces.IInput<T>.PopObject()
@@ -31,21 +57,49 @@ namespace Pipes.Modules
 
         bool Pipes.Interfaces.IInput<T>.PushObject(object element)
         {
-            if(Input != null && Input != this)
+            if (Input != null && Input != this)
                 return Input.PushObject(element);
-            else if(element.GetType().IsAssignableFrom(typeof(T)))
+            else if (element.GetType().IsAssignableFrom(typeof(T)))
                 return queue.TryAdd((T)element);
             return false;
+        }
+        public virtual void AddInputNotify(INotify inputListener)
+        {
+            InputListeners[inputListener] = inputListener;
+        }
+
+        public virtual bool PushIMessage(IMessage item)
+        {
+            return Push(item as T);
         }
 
         #endregion
 
         #region IOutput<T>
-        [Configure(DefaultValue=null)]
+        [Configure(DefaultValue = null)]
         public virtual IOutput<T> Output
         {
             get;
             set;
+        }
+
+        [Configure(DefaultValue = null)]
+        public ConcurrentDictionary<INotify, INotify> OutputListeners
+        {
+            get;
+            set;
+        }
+
+        public virtual T Pop()
+        {
+            T result = default(T);
+            if ((Output != null) && (Output != this))
+                result = (T)Output.Pop();
+            else
+                result = (T)PopObject();
+            for (int i = 0; i < OutputListeners.Count; i++)
+                OutputListeners.ElementAt(i).Value.CallDelegate(this);
+            return result;
         }
 
         bool Pipes.Interfaces.IOutput<T>.PushObject(object element)
@@ -58,45 +112,40 @@ namespace Pipes.Modules
             return Output.PopObject();
         }
 
+        public virtual void AddOutputNotify(INotify outputListener)
+        {
+            OutputListeners[outputListener] = outputListener;
+        }
+
+        public virtual IMessage PopIMessage()
+        {
+            return Pop();
+        }
         #endregion
 
         public override bool Initialize()
         {
-            if(base.Initialize())
+            if (base.Initialize())
             {
-                if(InputListeners == null)
+                if (InputListeners == null)
                     InputListeners = new ConcurrentDictionary<INotify, INotify>();
-                if(OutputListeners == null)
+                if (OutputListeners == null)
                     OutputListeners = new ConcurrentDictionary<INotify, INotify>();
                 queue = new ConcurrentQueue<T>();
-                if(Input == null)
+                if (Input == null)
                     Input = this;
-                if(Output == null)
+                if (Output == null)
                     Output = this;
                 return true;
             }
             return false;
         }
 
-        [Configure(DefaultValue=null)]
-        public ConcurrentDictionary<INotify, INotify> InputListeners
-        {
-            get;
-            set;
-        }
-
-        [Configure(DefaultValue=null)]
-        public ConcurrentDictionary<INotify, INotify> OutputListeners
-        {
-            get;
-            set;
-        }
-
         public virtual bool PushObject(object element)
         {
             if (Input != null)
             {
-                if(Input == this)
+                if (Input == this)
                     return queue.TryAdd((T)element);
                 else
                     return Input.PushObject(element);
@@ -111,66 +160,14 @@ namespace Pipes.Modules
                 if (Output == this)
                 {
                     T result;
-                    if(!queue.TryTake(out result))
+                    if (!queue.TryTake(out result))
                         result = default(T);
                     return result;
                 }
                 else
                     return Output.PopObject();
             }
-            return null;            
-        }
-
-        public virtual T Pop()
-        {
-            T result = default(T);
-            if ((Output != null) && (Output != this))
-                result = (T)Output.Pop();
-            else
-                result = (T)PopObject();
-            for(int i = 0; i < OutputListeners.Count; i++)
-                OutputListeners.ElementAt(i).Value.CallDelegate(this);
-            return result;
-        }
-
-        public virtual bool Push(T element)
-        {
-            bool result = false;
-            if(element != null)
-            {
-                if(Input != null && (Input != this))
-                    result = Input.Push(element);
-                else
-                    result = PushObject(element);
-
-                if(result)
-                {
-                    for(int i = 0; i < InputListeners.Count; i++)
-                        InputListeners.ElementAt(i).Value.CallDelegate(this);
-                }
-            }
-            return result;
-        }
-
-        public virtual void AddInputNotify(INotify inputListener)
-        {
-            InputListeners[inputListener] = inputListener;
-        }
-
-        public virtual void AddOutputNotify(INotify outputListener)
-        {
-            OutputListeners[outputListener] = outputListener;
-        }
-
-        public virtual bool PushIMessage(IMessage item)
-        {
-            return Push(item as T);
-        }
-
-
-        public virtual IMessage PopIMessage()
-        {
-            return Pop();
+            return null;
         }
     }
 }

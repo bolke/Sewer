@@ -8,20 +8,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fittings.Modules
+namespace Pipes.Modules
 {
-    public class BufferedInput<T>: Input<T> where T: class, IMessage
+    public class BufferedOutput<T>: Output<T> where T: class, IMessage
     {
         [Configure(InitType = typeof(ConcurrentQueue<>))]
         public IProducerConsumerCollection<T> Queue { get; set; }
 
         public override object PopObject()
         {
-            T result;
+            T result = default(T);
             if(Queue.TryTake(out result))
-            {
                 return result;
-            }
             return default(T);
         }
 

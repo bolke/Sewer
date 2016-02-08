@@ -40,8 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\IFitting.cs" />
-    <Compile Include="Modules\BufferedInput.cs" />
-    <Compile Include="Modules\BufferedOutput.cs" />
     <Compile Include="Modules\Fittings\SerialFitting.cs" />
     <Compile Include="Modules\TextMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

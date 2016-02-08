@@ -16,7 +16,7 @@ namespace Pipes.Interfaces
         bool PushIMessage(IMessage item);
     }
 
-    public interface IInput<T>: IInput where T:IMessage
+    public interface IInput<T>: IInput where T: class, IMessage
     {
         void AddInputNotify(INotify inputNotify);
         bool Push(T element);

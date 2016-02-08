@@ -12,22 +12,24 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public abstract class Input: Lockable, IObjectContainer
+    public abstract class Input : Lockable, IObjectContainer
     {
         public abstract bool PushIMessage(IMessage item);
-         public abstract object PopObject();
+        public abstract object PopObject();
 
-         public abstract bool PushObject(object element);
+        public abstract bool PushObject(object element);
     }
 
     public abstract class Input<T>: Input, IInput<T> where T: class, IMessage
     {
+        #region Properties
         [Configure]
         public ConcurrentDictionary<INotify, INotify> InputListeners
         {
             get;
             set;
         }
+        #endregion
 
         public Input()
         {

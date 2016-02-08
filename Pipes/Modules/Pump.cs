@@ -160,9 +160,9 @@ namespace Pipes.Modules
             lock(Padlock)
             {
                 if((IsStarted) && (!IsPaused))
-                {
-                    thread.Suspend();
+                {                    
                     IsPaused = true;
+                    Monitor.Wait(thread);
                     return true;
                 }
             }
@@ -175,7 +175,7 @@ namespace Pipes.Modules
             {
                 if(IsPaused)
                 {
-                    thread.Resume();
+                    Monitor.Pulse(thread);
                     IsPaused = false;
                     return true;
                 }
@@ -218,16 +218,16 @@ namespace Pipes.Modules
                         }
                         Flows.Enqueue(flow);
                     }
-                    //if(Delegated != null)
-                    //    Delegated.DynamicInvoke(DelegateParameters);
+                    if(Delegated != null)
+                        Delegated.DynamicInvoke(DelegateParameters);
                 }
                 Thread.Sleep(1);
             }
         }
 
-        public virtual void AddFlow(IOutput output,IInput input)
+        public virtual void AddFlow(IObjectContainer item1, IObjectContainer item2)
         {
-            Flows.Enqueue(new Tuple<IObjectContainer, IObjectContainer>(output, input));
+            Flows.Enqueue(new Tuple<IObjectContainer, IObjectContainer>(item1, item2));
         }
 
         public override bool Initialize()
