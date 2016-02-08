@@ -31,8 +31,9 @@ namespace Pipes.Modules
 
         #endregion Variables
 
-        [Configure(InitType = typeof(ConcurrentQueue<Tuple<IObjectContainer, IObjectContainer>>))]
-        public ConcurrentQueue<Tuple<IObjectContainer, IObjectContainer>> Flows { get; set; }
+        #region Properties
+        [Configure(InitType = typeof(ConcurrentQueue<Tuple<IOutput, IInput>>))]
+        public ConcurrentQueue<Tuple<IOutput, IInput>> Flows { get; set; }
 
         [Configure(DefaultValue = false)]
         public virtual bool AutoStart
@@ -47,6 +48,13 @@ namespace Pipes.Modules
                 lock(Padlock)
                     autoStart = value;
             }
+        }
+
+        [Configure(DefaultValue=1)]
+        public virtual int Interval
+        {
+            get;
+            set;
         }
 
         public virtual Delegate Delegated
@@ -139,6 +147,7 @@ namespace Pipes.Modules
                     paused = value;
             }
         }
+        #endregion
 
         public virtual bool Start()
         {
@@ -204,30 +213,26 @@ namespace Pipes.Modules
             {
                 if(!IsPaused)
                 {
-                    Tuple<IObjectContainer,IObjectContainer> flow = null;
+                    Tuple<IOutput,IInput> flow = null;
                     if(Flows.TryDequeue(out flow))
                     {       
                         IMessage item = null;
-                        Type t = flow.Item1.GetType();
-                        if(typeof(Output).IsAssignableFrom(flow.Item1.GetType()))
-                            item = (flow.Item1 as Output).PopIMessage();
-                        if(item != null)
-                        {
-                            if(typeof(Input).IsAssignableFrom(flow.Item2.GetType()))
-                                (flow.Item2 as Input).PushIMessage(item);
-                        }
+                        Type t = flow.Item1.GetType();                        
+                        item = flow.Item1.PopIMessage();
+                        if(item != null)                        
+                            flow.Item2.PushIMessage(item);                                                    
                         Flows.Enqueue(flow);
                     }
                     if(Delegated != null)
                         Delegated.DynamicInvoke(DelegateParameters);
                 }
-                Thread.Sleep(1);
+                Thread.Sleep(Interval);
             }
         }
 
-        public virtual void AddFlow(IObjectContainer item1, IObjectContainer item2)
+        public virtual void AddFlow(IOutput item1, IInput item2)
         {
-            Flows.Enqueue(new Tuple<IObjectContainer, IObjectContainer>(item1, item2));
+            Flows.Enqueue(new Tuple<IOutput, IInput>(item1, item2));
         }
 
         public override bool Initialize()

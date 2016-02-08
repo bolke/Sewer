@@ -12,8 +12,9 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public abstract class Input : Lockable, IObjectContainer
+    public abstract class Input : Lockable, IInput, IObjectContainer
     {
+        public abstract void AddInputNotify(INotify inputListener);
         public abstract bool PushIMessage(IMessage item);
         public abstract object PopObject();
 
@@ -59,7 +60,7 @@ namespace Pipes.Modules
             return false;
         }
 
-        public virtual void AddInputNotify(INotify inputListener)
+        public override void AddInputNotify(INotify inputListener)
         {
             InputListeners[inputListener] = inputListener;
         }

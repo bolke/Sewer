@@ -13,12 +13,12 @@ namespace Pipes.Interfaces
 {
     public interface IInput: IObjectContainer, IUnique
     {
+        void AddInputNotify(INotify inputNotify);
         bool PushIMessage(IMessage item);
     }
 
     public interface IInput<T>: IInput where T: class, IMessage
-    {
-        void AddInputNotify(INotify inputNotify);
+    {        
         bool Push(T element);
         new bool PushObject(object element);
         new object PopObject();

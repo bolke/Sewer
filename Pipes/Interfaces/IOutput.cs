@@ -13,12 +13,12 @@ namespace Pipes.Interfaces
 {
     public interface IOutput: IObjectContainer, IUnique
     {
+        void AddOutputNotify(INotify outputNotify);
         IMessage PopIMessage();
     }
 
     public interface IOutput<T>: IOutput where T: class, IMessage
-    {
-        void AddOutputNotify(INotify outputNotify);
+    {        
         T Pop();
         new bool PushObject(object element);
         new object PopObject();

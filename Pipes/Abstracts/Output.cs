@@ -12,12 +12,11 @@ using System.Threading.Tasks;
 
 namespace Pipes.Modules
 {
-    public abstract class Output: Lockable, IObjectContainer
+    public abstract class Output: Lockable, IOutput, IObjectContainer
     {
+        public abstract void AddOutputNotify(INotify outputListener);
         public abstract IMessage PopIMessage();
-
         public abstract object PopObject();
-
         public abstract bool PushObject(object element);
     }
 
@@ -52,7 +51,7 @@ namespace Pipes.Modules
             return result;
         }
 
-        public virtual void AddOutputNotify(INotify outputListener)
+        public override void AddOutputNotify(INotify outputListener)
         {
             OutputListeners[outputListener] = outputListener;
         }
