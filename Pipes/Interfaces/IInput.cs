@@ -11,7 +11,7 @@ using Mod.Configuration.Properties;
 
 namespace Pipes.Interfaces
 {
-    public interface IInput: IObjectContainer, IUnique
+    public interface IInput: IObjectContainer, ILockable
     {
         void AddInputNotify(INotify inputNotify);
         bool PushIMessage(IMessage item);

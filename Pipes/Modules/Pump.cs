@@ -238,12 +238,10 @@ namespace Pipes.Modules
         public override bool Initialize()
         {
             if(base.Initialize())
-            {
-                IsStarted = false;
-                IsStopped = false;
-                IsPaused = false;
-                IsRunning = false;
+            {                
                 thread = new Thread(this.ThreadMain);
+                if (AutoStart)
+                    Start();
                 return true;
             }
             return false;

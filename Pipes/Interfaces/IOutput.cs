@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Pipes.Interfaces
 {
-    public interface IOutput: IObjectContainer, IUnique
+    public interface IOutput: IObjectContainer, IUnique, ILockable
     {
         void AddOutputNotify(INotify outputNotify);
         IMessage PopIMessage();

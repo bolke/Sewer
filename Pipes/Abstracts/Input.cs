@@ -17,7 +17,6 @@ namespace Pipes.Modules
         public abstract void AddInputNotify(INotify inputListener);
         public abstract bool PushIMessage(IMessage item);
         public abstract object PopObject();
-
         public abstract bool PushObject(object element);
     }
 
