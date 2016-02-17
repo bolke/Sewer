@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Fittings.Interfaces
 {
-    public interface IFitting<T>: IUnique
+    public interface IFitting<T> : IValve<T>, IInputListener, IOutputListener, IUnique where T : class, IMessage
     {
     }
 }
