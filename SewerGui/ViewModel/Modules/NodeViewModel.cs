@@ -64,6 +64,18 @@ namespace SewerGui.ViewModel
             }
         }
 
+        private ICommand createCommand = null;
+
+        public ICommand CreateCommand
+        {
+            get
+            {
+                if (createCommand == null)
+                    createCommand = new RelayCommand(DoCreateCommand, CanCreateCommand);
+                return createCommand;
+            }
+        }
+
         public virtual void DoInitializeCommand()
         {
             if (BaseItem != null)
@@ -87,6 +99,12 @@ namespace SewerGui.ViewModel
         {            
             return IsInitialized;
         }
-        
+
+        public virtual bool CanCreateCommand()
+        {
+            return baseItem == null;
+        }
+
+        public abstract void DoCreateCommand();
     }
 }

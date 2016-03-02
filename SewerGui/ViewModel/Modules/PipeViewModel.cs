@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using Pipes.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,16 @@ namespace SewerGui.ViewModel
 {
     public class PipeViewModel : NodeViewModel
     {
+        public IPipe<IMessage> Pipe
+        {
+            get
+            {
+                return BaseItem as IPipe<IMessage>;
+            }
+            set
+            {
+                BaseItem = value; RaisePropertyChanged(() => Pipe);
+            }
+        }
     }
 }

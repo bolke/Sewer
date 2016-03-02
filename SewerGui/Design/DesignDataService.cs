@@ -9,7 +9,7 @@ namespace SewerGui.Design
         {
             // Use this to create design time data
 
-            var item = new DataItem("Welcome to MVVM Light [design]");
+            var item = new DataItem("DESIGN DINGEN DINGEN DESIGN");
             callback(item, null);
         }
     }

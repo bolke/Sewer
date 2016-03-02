@@ -11,7 +11,11 @@ namespace SewerGui.ViewModel
 {
     public class InputViewModel : NodeViewModel
     {
-        public IInput Input { get { return BaseItem as IInput; } set { BaseItem = value; RaisePropertyChanged(() => Input); } }
+        public IInput Input
+        {
+            get { return BaseItem as IInput; }
+            set { BaseItem = value; RaisePropertyChanged(() => Input); }
+        }
 
         public virtual bool CanAddInputNotifyCommand()
         {

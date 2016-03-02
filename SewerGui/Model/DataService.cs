@@ -8,7 +8,7 @@ namespace SewerGui.Model
         {
             // Use this to connect to the actual data service
 
-            var item = new DataItem("Welcome to MVVM Light");
+            var item = new DataItem("DINGEN EN DINGEN DOEN DINGEN");
             callback(item, null);
         }
     }

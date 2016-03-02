@@ -10,11 +10,31 @@ namespace SewerGui.ViewModel
 {
     public class OutputViewModel : NodeViewModel
     {
-        public IOutput Output { get { return BaseItem as IOutput; } set { BaseItem = value; RaisePropertyChanged(() => Output); } }
+        public IOutput Output
+        {
+            get
+            {
+                return BaseItem as IOutput;
+            }
+            set
+            {
+                BaseItem = value; RaisePropertyChanged(() => Output);
+            }
+        }
 
-        public virtual bool CanAddInputNotifyCommand() { return true; }
+        public virtual bool CanAddInputNotifyCommand()
+        {
+            return true;
+        }
 
-        public virtual bool CanPopIMessage() { return true; }
+        public virtual bool CanPopIMessage()
+        {
+            return true;
+        }
 
+        //void AddOutputNotify(INotify outputNotify);
+        //IMessage PopIMessage();
+        //new bool PushObject(object element);
+        //new object PopObject();
     }
 }
