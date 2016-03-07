@@ -2,10 +2,6 @@
 using GalaSoft.MvvmLight.Command;
 using Mod.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
@@ -13,6 +9,7 @@ namespace SewerGui.ViewModel
 {
     public abstract class NodeViewModel : ViewModelBase
     {
+        #region variables
         private IInitiator baseItem = null;
 
         private double top = 0;
@@ -21,6 +18,12 @@ namespace SewerGui.ViewModel
         private double bottom = 0;
         private double rotation = 0;
 
+        private ICommand initializeCommand = null;
+        private ICommand cleanupCommand = null;
+        private ICommand createCommand = null;
+        #endregion
+
+        #region properties
         public IInitiator BaseItem { get { return baseItem; } set { baseItem = value; RaisePropertyChanged(() => BaseItem); } }
 
         public double Top { get { return top; } set { top = value; RaisePropertyChanged(() => Top); } }
@@ -40,8 +43,6 @@ namespace SewerGui.ViewModel
         public bool IsInitialized { get { return BaseItem == null ? false : BaseItem.IsInitialized; } }
         public virtual Guid UniqueId { get { return BaseItem == null ? Guid.Empty : BaseItem.UniqueId; } }
 
-        private ICommand initializeCommand = null;
-
         public ICommand InitializeCommand
         {
             get
@@ -52,8 +53,6 @@ namespace SewerGui.ViewModel
             }
         }
 
-        private ICommand cleanupCommand = null;
-
         public ICommand CleanupCommand
         {
             get
@@ -63,9 +62,7 @@ namespace SewerGui.ViewModel
                 return cleanupCommand;
             }
         }
-
-        private ICommand createCommand = null;
-
+        
         public ICommand CreateCommand
         {
             get
@@ -75,7 +72,9 @@ namespace SewerGui.ViewModel
                 return createCommand;
             }
         }
+        #endregion
 
+        #region functions
         public virtual void DoInitializeCommand()
         {
             if (BaseItem != null)
@@ -106,5 +105,6 @@ namespace SewerGui.ViewModel
         }
 
         public abstract void DoCreateCommand();
+        #endregion
     }
 }

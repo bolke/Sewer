@@ -1,11 +1,6 @@
-﻿using GalaSoft.MvvmLight;
-using Pipes.Interfaces;
+﻿using Pipes.Interfaces;
 using Pipes.Modules;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SewerGui.ViewModel
 {
@@ -21,6 +16,11 @@ namespace SewerGui.ViewModel
             {
                 BaseItem = value; RaisePropertyChanged(() => Pump);
             }
+        }
+
+        public override void DoCreateCommand()
+        {
+            throw new NotImplementedException();
         }
     }
 }

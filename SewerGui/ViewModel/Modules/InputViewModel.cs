@@ -1,11 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using Pipes.Interfaces;
+﻿using Pipes.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SewerGui.ViewModel
 {
@@ -37,9 +31,14 @@ namespace SewerGui.ViewModel
             return true;
         }
 
-//        public virtual void AddInputNotify(INotify inputListener);
-//        public virtual bool PushIMessage(IMessage item);
-//        public virtual object PopObject();
-//        public virtual bool PushObject(object element);
+        public override void DoCreateCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        //        public virtual void AddInputNotify(INotify inputListener);
+        //        public virtual bool PushIMessage(IMessage item);
+        //        public virtual object PopObject();
+        //        public virtual bool PushObject(object element);
     }
 }

@@ -1,10 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using Pipes.Interfaces;
+﻿using Pipes.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SewerGui.ViewModel
 {
@@ -30,6 +25,11 @@ namespace SewerGui.ViewModel
         public virtual bool CanPopIMessage()
         {
             return true;
+        }
+
+        public override void DoCreateCommand()
+        {
+            throw new NotImplementedException();
         }
 
         //void AddOutputNotify(INotify outputNotify);
