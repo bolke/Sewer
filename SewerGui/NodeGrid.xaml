@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="SewerGui.NodeGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SewerGui"			 
+			 DataContext="{StaticResource NodeService}"
+             mc:Ignorable="d" 			 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Cursor="Hand" Background="#01FFFFFF">		 		
+		<Grid.ContextMenu>
+            <ContextMenu x:Name="GridMenu">
+    		<MenuItem Header="Place Pipe">
+                    <MenuItem.InputBindings>
+                        <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+                    </MenuItem.InputBindings>
+                </MenuItem>
+                <MenuItem Header="Place Pump">
+                    <MenuItem.InputBindings>
+                        <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+                    </MenuItem.InputBindings>
+                </MenuItem>
+                <MenuItem Header="Place Valve">
+                    <MenuItem.InputBindings>
+                        <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+                    </MenuItem.InputBindings>
+                </MenuItem>
+                <MenuItem Header="Place Input">
+    			<MenuItem Header="BufferedInput" HorizontalAlignment="Left" Width="176.673" Margin="0,0,-37.166,0">
+                        <MenuItem.InputBindings>
+                            <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+                        </MenuItem.InputBindings>
+                    </MenuItem>
+                </MenuItem>
+    		<MenuItem Header="Place Output">
+    			<MenuItem Header="BufferedOutput" HorizontalAlignment="Left" Width="170.333" Margin="0,0,-20.333,0">
+                        <MenuItem.InputBindings>
+                            <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+                        </MenuItem.InputBindings>
+                    </MenuItem>
+                </MenuItem>
+    		<MenuItem Header="Place Fitting">
+    			<MenuItem Header="SerialFitting" HorizontalAlignment="Left" Width="152.507" Margin="0,0,-13,0">
+					<MenuItem.InputBindings>
+                            <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+					</MenuItem.InputBindings>
+  				</MenuItem>
+    		</MenuItem>
+    	</ContextMenu>
+		</Grid.ContextMenu>
+    </Grid>
+</UserControl>

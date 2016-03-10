@@ -8,9 +8,9 @@ namespace SewerGui.ViewModel
     {
         static ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            SimpleIoc.Default.Register<MainViewModel>();
+            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);            
             SimpleIoc.Default.Register<INodeService, NodeService>();
+            SimpleIoc.Default.Register<MainViewModel>();
         }
 
         public MainViewModel Main
@@ -18,14 +18,6 @@ namespace SewerGui.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
-            }
-        }
-
-        public INodeService Nodes
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<NodeService>();
             }
         }
 

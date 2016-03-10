@@ -1,6 +1,8 @@
-﻿using SewerGui.ViewModel;
+﻿using GalaSoft.MvvmLight.Command;
+using SewerGui.ViewModel;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace SewerGui.Services
 {
@@ -33,6 +35,28 @@ namespace SewerGui.Services
                 return node.UniqueId;
             }
             return Guid.Empty;
-        }        
+        }       
+				
+		private ICommand testCommand = null;
+		
+        public ICommand TestCommand
+        {
+            get
+            {
+                if (testCommand == null)
+                    testCommand = new RelayCommand<string>(DoTestCommand, CanTestCommand);
+                return testCommand;
+            }
+        }
+		
+		public virtual void DoTestCommand(string testArgument)
+        {
+            Console.WriteLine(testArgument);
+        }
+
+        public virtual bool CanTestCommand(string testArgument)
+        {            
+            return true;
+        }
     }
 }
