@@ -46,6 +46,18 @@
 					</MenuItem.InputBindings>
   				</MenuItem>
     		</MenuItem>
+			<MenuItem Header="Place Connection">				
+				<MenuItem Header="Oneway">				
+					<MenuItem.InputBindings>
+                            <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+					</MenuItem.InputBindings>
+  				</MenuItem>
+				<MenuItem Header="Twoway">				
+					<MenuItem.InputBindings>
+                            <MouseBinding Command="{Binding TestCommand}" MouseAction="LeftClick" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=MenuItem}, Path=Header}"/>
+					</MenuItem.InputBindings>
+  				</MenuItem>
+			</MenuItem>
     	</ContextMenu>
 		</Grid.ContextMenu>
     </Grid>
